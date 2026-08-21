@@ -239,13 +239,13 @@ export default {
 }
 
 :deep(.markdown a[href^="mission://"]) {
-  color: #7dbbbb;
+  color: #3269a8;
   font-weight: bold;
   text-decoration: none;
-  border-bottom: 1px dotted #7dbbbb;
+  border-bottom: 1px dotted #3269a8;
 }
 :deep(.markdown a[href^="mission://"]:hover) {
-  background-color: rgba(125, 187, 187, 0.2);
+  background-color: rgba(50, 105, 168, 0.2);
   cursor: pointer;
 }
 

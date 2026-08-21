@@ -2,7 +2,7 @@
   "initialSlug": "001",
   "planetPath": "/disc_spin.webm",
   "animate": true,
-  "defaultTitle": "SILVERSHARD COLONY |",
+  "defaultTitle": "FICO CORPS COLONY |",
   "icon": "/faction-logos/orbital.svg",
   "header": {
     "planet": "CB-9",
@@ -10,7 +10,7 @@
     "system": "Ceres Bay",
     "gate": "N/A",
     "ring": "Long Rim",
-    "headerTitle": "SILVERSHARD",
+    "headerTitle": "FICO CORPS",
     "headerSubtitle": "Colony Defense",
     "subheaderTitle": "Tracking System",
     "subheaderSubtitle": "ARGENTUM RESEARCH"

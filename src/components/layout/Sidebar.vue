@@ -107,7 +107,7 @@ export default {
     width: 100%;
     height: 60px;
     background: var(--secondary-color, #161c1dcc);
-    border-top: 2px solid var(--primary-color, #7dbbbb);
+    border-top: 2px solid var(--primary-color, #3269a8);
     z-index: 2000;
     justify-content: space-around;
     align-items: center;
@@ -138,9 +138,9 @@ export default {
 }
 
 .mobile-bottom-nav a.active {
-    background: rgba(125, 187, 187, 0.2); /* var(--primary-color) with opacity */
-    color: var(--primary-color, #7dbbbb);
-    border-top: 2px solid var(--primary-color, #7dbbbb);
+    background: rgba(50, 105, 168, 0.2); /* var(--primary-color) with opacity */
+    color: var(--primary-color, #3269a8);
+    border-top: 2px solid var(--primary-color, #3269a8);
     margin-top: -2px; /* Offset border */
 }
 
