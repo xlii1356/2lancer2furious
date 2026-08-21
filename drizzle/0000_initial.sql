@@ -1,5 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE TABLE users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text UNIQUE NOT NULL, name text, username text, avatar_url text, role text NOT NULL DEFAULT 'member' CHECK (role IN ('admin','member')), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text UNIQUE NOT NULL, name text, username text, avatar_url text, password_hash text, role text NOT NULL DEFAULT 'member' CHECK (role IN ('admin','member')), created_at timestamptz NOT NULL DEFAULT now());
 CREATE UNIQUE INDEX users_username_lower_idx ON users (lower(username));
 CREATE TABLE allowed_emails (email text PRIMARY KEY, invited_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE events (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), slug text UNIQUE NOT NULL, title text NOT NULL, body jsonb NOT NULL, event_date date, slot_count integer CHECK (slot_count > 0), created_by uuid NOT NULL REFERENCES users(id), created_at timestamptz NOT NULL DEFAULT now());
