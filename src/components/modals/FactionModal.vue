@@ -20,8 +20,6 @@
 <script>
 import { VueMarkdownIt } from '@f3ve/vue-markdown-it';
 import PilotModal from '@/components/modals/PilotModal.vue';
-import PrimeModal from '@/components/modals/PrimeModal.vue';
-import primeDataList from '@/assets/prime/prime.json';
 
 export default {
 	name: "FactionModal",
@@ -46,11 +44,6 @@ export default {
             default: () => []
         }
 	},
-    data() {
-        return {
-            primeData: primeDataList
-        };
-    },
     methods: {
         handleMarkdownClick(event) {
             const link = event.target.closest('a');
@@ -86,25 +79,6 @@ export default {
                 const slug = decodeURIComponent(href.replace('mission://', ''));
                 this.$router.push({ path: '/status', query: { mission: slug } });
                 this.$emit('close'); // Close modal on navigation
-            }
-
-            // --- HANDLE PRIME LINKS ---
-            else if (href && href.startsWith('prime://')) {
-                event.preventDefault();
-                const rawAlias = href.replace('prime://', '');
-                const targetAlias = decodeURIComponent(rawAlias).toUpperCase();
-                const primeEntry = this.primeData.find(p => p.alias.toUpperCase() === targetAlias);
-
-                if (primeEntry) {
-                    this.$oruga.modal.open({
-                        component: PrimeModal,
-                        custom: true,
-                        trapFocus: true,
-                        props: { prime: primeEntry },
-                        class: 'custom-modal',
-                        width: 1920,
-                    });
-                }
             }
             // --- HANDLE FACTION LINKS ---
             else if (href && href.startsWith('faction://')) {
@@ -257,17 +231,6 @@ export default {
 }
 :deep(.markdown a[href^="faction://"]:hover) {
   background-color: rgba(189, 147, 249, 0.2);
-  cursor: pointer;
-}
-
-:deep(.markdown a[href^="prime://"]) {
-  color: #ff5555; 
-  font-weight: bold;
-  text-decoration: none;
-  border-bottom: 1px dotted #ff5555;
-}
-:deep(.markdown a[href^="prime://"]:hover) {
-  background-color: rgba(255, 85, 85, 0.2);
   cursor: pointer;
 }
 </style>

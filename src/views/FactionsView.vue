@@ -49,10 +49,7 @@ import { VueMarkdownIt } from '@f3ve/vue-markdown-it';
 import Faction from "@/components/Faction.vue";
 import FactionModal from "@/components/modals/FactionModal.vue";
 import PilotModal from '@/components/modals/PilotModal.vue';
-import PrimeModal from '@/components/modals/PrimeModal.vue';
 
-// --- THIS IMPORT WAS MISSING ---
-import primeDataList from '@/assets/prime/prime.json';
 import locationsData from '@/assets/map/locations.json';
 
 export default {
@@ -80,8 +77,6 @@ export default {
   data() {
     return {
       selectedFaction: { type: Object },
-      // --- THIS DATA REGISTRATION WAS MISSING ---
-      primeData: primeDataList,
       locations: locationsData
     };
   },
@@ -176,31 +171,6 @@ export default {
           if(container) container.scrollTop = 0;
         }
       }
-
-      // --- HANDLE PRIME LINKS ---
-      else if (href && href.startsWith('prime://')) {
-        event.preventDefault();
-        
-        const rawAlias = href.replace('prime://', '');
-        const targetAlias = decodeURIComponent(rawAlias).toUpperCase();
-
-        const primeEntry = this.primeData.find(p => 
-          p.alias.toUpperCase() === targetAlias
-        );
-
-        if (primeEntry) {
-          this.$oruga.modal.open({
-            component: PrimeModal,
-            custom: true,
-            trapFocus: true,
-            props: { prime: primeEntry },
-            class: 'custom-modal',
-            width: 1920,
-          });
-        } else {
-          console.warn("Prime entry not found:", targetAlias);
-        }
-      }
     }
   }
 };
@@ -241,17 +211,6 @@ export default {
 }
 :deep(.markdown a[href^="faction://"]:hover) {
   background-color: rgba(189, 147, 249, 0.2);
-  cursor: pointer;
-}
-
-:deep(.markdown a[href^="prime://"]) {
-  color: #ff5555; 
-  font-weight: bold;
-  text-decoration: none;
-  border-bottom: 1px dotted #ff5555;
-}
-:deep(.markdown a[href^="prime://"]:hover) {
-  background-color: rgba(255, 85, 85, 0.2);
   cursor: pointer;
 }
 

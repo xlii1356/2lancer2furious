@@ -1,0 +1,37 @@
+[
+    {
+        "callsign": "STHENO",
+        "nhps": [
+            {
+                "name": "SCYLLA",
+                "type": "Gorgon Class",
+                "icon": "/faction-logos/scylla.svg"
+            },
+            {
+                "name": "SOTERIA",
+                "type": "ENLIGHTENMENT Class",
+                "icon": "/faction-logos/soteria.svg"
+            }
+        ]
+    },
+    {
+        "callsign": "DIAMOND",
+        "nhps": [
+            {
+                "name": "TLALOC",
+                "type": "MONARCH Class",
+                "icon": "/faction-logos/tlaloc.svg"
+            }
+        ]
+    },
+    {
+        "callsign": "GRAN GRAN",
+        "nhps": [
+            {
+                "name": "INNES",
+                "type": "SALADIN Class",
+                "icon": "/faction-logos/noah.svg"
+            }
+        ]
+    }
+]

@@ -7,4 +7,4 @@ Descendants of the original FiCo Corps. Isolated for centuries they discovered a
 
 Composed of the descendants of the colonists  who wished to keep [FCE](faction://FCE) from learning of the power of ambrosia, they were victorious in their civil war but at high cost. With ambrosia supply dwindling and beset on all sides by pirates, bandits, cultists and fascists, they’ve been losing territory and power as the planet descends into anarchy.
 
-[ALDERMAN](prime://ALDERMAN) is the last original colonist in this faction, kept alive by centuries of ambrosia use. Without her there may not be enough to hold this fragile group together.
+ALDERMAN is the last original colonist in this faction, kept alive by centuries of ambrosia use. Without her there may not be enough to hold this fragile group together.
