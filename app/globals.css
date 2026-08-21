@@ -1,0 +1,3 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+@layer base { body { @apply bg-slate-50 text-slate-800 antialiased; } input, textarea { @apply w-full rounded border border-slate-300 bg-white px-3 py-2; } button, .button { @apply rounded bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400; } a { @apply text-indigo-700 hover:text-indigo-900; } }
+.prose-content { line-height: 1.75; }.prose-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; }.prose-content h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.25rem; }.prose-content img { max-width: 100%; border-radius: .5rem; }

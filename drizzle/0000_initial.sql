@@ -1,0 +1,11 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text UNIQUE NOT NULL, name text, username text, avatar_url text, role text NOT NULL DEFAULT 'member' CHECK (role IN ('admin','member')), created_at timestamptz NOT NULL DEFAULT now());
+CREATE UNIQUE INDEX users_username_lower_idx ON users (lower(username));
+CREATE TABLE allowed_emails (email text PRIMARY KEY, invited_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE events (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), slug text UNIQUE NOT NULL, title text NOT NULL, body jsonb NOT NULL, event_date date, slot_count integer CHECK (slot_count > 0), created_by uuid NOT NULL REFERENCES users(id), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE responses (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), event_id uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE, author_id uuid NOT NULL REFERENCES users(id), byline text, body jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(event_id, author_id));
+CREATE TABLE signups (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), event_id uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE, user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(event_id, user_id));
+CREATE TABLE images (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), blob_url text NOT NULL, uploaded_by uuid NOT NULL REFERENCES users(id), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE accounts (user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, type text NOT NULL, provider text NOT NULL, provider_account_id text NOT NULL, refresh_token text, access_token text, expires_at integer, token_type text, scope text, id_token text, session_state text, PRIMARY KEY(provider, provider_account_id));
+CREATE TABLE sessions (session_token text PRIMARY KEY, user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires timestamptz NOT NULL);
+CREATE TABLE verification_tokens (identifier text NOT NULL, token text NOT NULL, expires timestamptz NOT NULL, PRIMARY KEY(identifier, token));

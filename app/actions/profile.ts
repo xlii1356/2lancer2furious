@@ -1,0 +1,4 @@
+"use server";
+import { db } from "@/db"; import { users } from "@/db/schema"; import { currentUser } from "./helpers"; import { eq, sql } from "drizzle-orm"; import { revalidatePath } from "next/cache";
+const usernamePattern = /^[A-Za-z0-9 _.-]{2,24}$/;
+export async function saveProfile(formData: FormData) { const user = await currentUser(); const username = String(formData.get("username") || "").trim(); if (!usernamePattern.test(username)) throw new Error("Username must be 2–24 characters and use letters, numbers, spaces, _, -, or ."); const duplicate = await db.execute(sql`select id from users where lower(username) = lower(${username}) and id <> ${user.id}`); if (duplicate.rows.length) throw new Error("That username is already taken"); await db.update(users).set({ username, avatarUrl: String(formData.get("avatarUrl") || "").trim() || null }).where(eq(users.id, user.id)); revalidatePath("/profile"); }
