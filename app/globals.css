@@ -1,3 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap");
 @tailwind base; @tailwind components; @tailwind utilities;
-@layer base { body { @apply bg-slate-50 text-slate-800 antialiased; } input, textarea { @apply w-full rounded border border-slate-300 bg-white px-3 py-2; } button, .button { @apply rounded bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400; } a { @apply text-indigo-700 hover:text-indigo-900; } }
-.prose-content { line-height: 1.75; }.prose-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; }.prose-content h3 { font-size: 1.2rem; font-weight: 700; margin-top: 1.25rem; }.prose-content img { max-width: 100%; border-radius: .5rem; }
+
+@layer base {
+  html { scrollbar-color: theme("colors.primary") transparent; scrollbar-width: thin; }
+  body { @apply bg-void text-text-hi antialiased font-label; }
+  h1, h2, h3 { @apply font-display uppercase tracking-wide text-text-hi; }
+  input, textarea {
+    @apply w-full rounded-none border border-separator bg-surface px-3 py-2 text-text-hi placeholder:text-text-low focus:border-primary focus:outline-none;
+  }
+  button, .button {
+    @apply relative rounded-none bg-primary px-4 py-2 font-label font-bold uppercase tracking-widest text-void hover:bg-white disabled:cursor-not-allowed disabled:bg-mission-start disabled:text-text-mid;
+  }
+  a { @apply text-primary hover:text-white; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background-color: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-primary; border-radius: 6px; }
+}
+
+/* Signature accent: the skewed rhombus / angular insignia bar used throughout the reference site's headers and dividers */
+.rhombus-accent { transform: skew(-25deg); @apply bg-primary; }
+
+.eyebrow { @apply font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid; }
+
+.mission-status-start { @apply bg-mission-start; }
+.mission-status-partial { @apply bg-mission-partial; }
+.mission-status-success { @apply bg-mission-success; }
+.mission-status-failure { @apply bg-mission-failure; }
+
+.prose-content { line-height: 1.75; @apply text-text-hi; }
+.prose-content h1 { @apply font-display uppercase tracking-wide text-text-mid text-2xl mt-6; }
+.prose-content h2 { @apply font-display uppercase tracking-wide text-text-hi text-xl mt-5; }
+.prose-content img { max-width: 100%; }
