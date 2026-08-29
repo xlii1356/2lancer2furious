@@ -23,6 +23,10 @@
 /* Signature accent: the skewed rhombus / angular insignia bar used throughout the reference site's headers and dividers */
 .rhombus-accent { transform: skew(-25deg); @apply bg-primary; }
 
+.clip-bottom-right {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
 .eyebrow { @apply font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid; }
 
 .mission-status-start { @apply bg-mission-start; }
