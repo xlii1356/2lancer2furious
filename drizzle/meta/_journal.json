@@ -13,7 +13,7 @@
       "idx": 1,
       "version": "7",
       "when": 1,
-      "tag": "0002_faction_tables",
+      "tag": "0002_factions_rework",
       "breakpoints": true
     },
     {
