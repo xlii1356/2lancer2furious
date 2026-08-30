@@ -6,7 +6,7 @@ export function Header({ username, admin }: { username: string; admin: boolean }
         <Image src="/faction-logos/silvershard_outline.webp" alt="" width={56} height={80} className="h-20 w-auto" />
         <div className="flex flex-col justify-center">
           <span className="font-display text-2xl font-extrabold uppercase leading-none tracking-[0.15em] text-void">
-            2 Lancer 2 Furious
+            FiCo Corp
           </span>
           <span className="font-eyebrow text-xs font-bold uppercase tracking-[0.1em] text-void/70">
             Mission Briefing Terminal
