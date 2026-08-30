@@ -3,7 +3,7 @@ import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 
-export function ImageUpload({ name, defaultValue }: { name: string; defaultValue?: string | null }) {
+export function ImageUpload({ name, defaultValue, endpoint = "/api/upload" }: { name: string; defaultValue?: string | null; endpoint?: string }) {
   const [url, setUrl] = useState(defaultValue || "");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +13,7 @@ export function ImageUpload({ name, defaultValue }: { name: string; defaultValue
     setUploading(true);
     setError("");
     try {
-      const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/upload" });
+      const blob = await upload(file.name, file, { access: "public", handleUploadUrl: endpoint });
       setUrl(blob.url);
     } catch {
       setError("Upload failed. Try a smaller image or a different file.");

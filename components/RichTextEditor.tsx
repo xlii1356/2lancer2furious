@@ -3,7 +3,8 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useEffect } from "react";
+import { upload } from "@vercel/blob/client";
+import { useEffect, useRef, useState } from "react";
 
 export function RichTextEditor({
   name,
@@ -12,6 +13,8 @@ export function RichTextEditor({
   name: string;
   defaultValue?: object;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageUploading, setImageUploading] = useState(false);
   const editor = useEditor({
     extensions: [StarterKit, Link, Image],
     content: defaultValue || { type: "doc", content: [{ type: "paragraph" }] },
@@ -29,6 +32,20 @@ export function RichTextEditor({
     form.addEventListener("submit", sync);
     return () => form.removeEventListener("submit", sync);
   }, [editor, name]);
+
+  async function handleImageFile(file: File | undefined) {
+    if (!file || !editor) return;
+    setImageUploading(true);
+    try {
+      const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/upload" });
+      editor.chain().focus().setImage({ src: blob.url }).run();
+    } catch {
+      window.alert("Image upload failed. Try a smaller image or a different file.");
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   if (!editor) return null;
 
@@ -56,16 +73,16 @@ export function RichTextEditor({
         >
           Link
         </button>
-        <button
-          type="button"
-          className={btn(false)}
-          onClick={() => {
-            const url = window.prompt("Image URL");
-            if (url) editor.chain().focus().setImage({ src: url }).run();
-          }}
-        >
-          Image
+        <button type="button" className={btn(false)} disabled={imageUploading} onClick={() => fileInputRef.current?.click()}>
+          {imageUploading ? "Uploading..." : "Image"}
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+          className="hidden"
+          onChange={(e) => handleImageFile(e.target.files?.[0])}
+        />
       </div>
       <EditorContent editor={editor} className="prose-content min-h-[200px] px-3 py-2 text-text-hi [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:outline-none" />
       <input type="hidden" name={name} />
