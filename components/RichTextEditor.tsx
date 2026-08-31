@@ -39,8 +39,9 @@ export function RichTextEditor({
     try {
       const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/upload" });
       editor.chain().focus().setImage({ src: blob.url }).run();
-    } catch {
-      window.alert("Image upload failed. Try a smaller image or a different file.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      window.alert(`Image upload failed: ${message}`);
     } finally {
       setImageUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

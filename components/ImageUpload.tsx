@@ -15,8 +15,9 @@ export function ImageUpload({ name, defaultValue, endpoint = "/api/upload" }: { 
     try {
       const blob = await upload(file.name, file, { access: "public", handleUploadUrl: endpoint });
       setUrl(blob.url);
-    } catch {
-      setError("Upload failed. Try a smaller image or a different file.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(`Upload failed: ${message}`);
     } finally {
       setUploading(false);
     }
