@@ -1,5 +1,5 @@
 "use client";
-import { useEditor, useEditorState, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
@@ -15,26 +15,14 @@ export function RichTextEditor({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [, forceUpdate] = useState(0);
   const editor = useEditor({
     extensions: [StarterKit, Link, Image],
     content: defaultValue || { type: "doc", content: [{ type: "paragraph" }] },
     immediatelyRender: false,
-  });
-
-  const state = useEditorState({
-    editor,
-    selector: (ctx) =>
-      ctx.editor
-        ? {
-            bold: ctx.editor.isActive("bold"),
-            italic: ctx.editor.isActive("italic"),
-            heading: ctx.editor.isActive("heading", { level: 2 }),
-            bulletList: ctx.editor.isActive("bulletList"),
-            orderedList: ctx.editor.isActive("orderedList"),
-            blockquote: ctx.editor.isActive("blockquote"),
-            link: ctx.editor.isActive("link"),
-          }
-        : null,
+    // Re-render the toolbar on every transaction (typing, selection change, etc.)
+    // so the active/inactive button states stay accurate.
+    onTransaction: () => forceUpdate((n) => n + 1),
   });
 
   useEffect(() => {
@@ -64,7 +52,7 @@ export function RichTextEditor({
     }
   }
 
-  if (!editor || !state) return null;
+  if (!editor) return null;
 
   const btn = (active: boolean) =>
     `rounded-none border border-separator px-2 py-1 text-xs font-bold uppercase tracking-wide ${
@@ -83,15 +71,15 @@ export function RichTextEditor({
   return (
     <div className="border border-separator bg-void">
       <div className="flex flex-wrap gap-1 border-b border-separator p-2">
-        <button type="button" className={btn(state.bold)} onMouseDown={mousedown(() => editor.chain().focus().toggleBold().run())}>Bold</button>
-        <button type="button" className={btn(state.italic)} onMouseDown={mousedown(() => editor.chain().focus().toggleItalic().run())}>Italic</button>
-        <button type="button" className={btn(state.heading)} onMouseDown={mousedown(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}>H2</button>
-        <button type="button" className={btn(state.bulletList)} onMouseDown={mousedown(() => editor.chain().focus().toggleBulletList().run())}>List</button>
-        <button type="button" className={btn(state.orderedList)} onMouseDown={mousedown(() => editor.chain().focus().toggleOrderedList().run())}>1. List</button>
-        <button type="button" className={btn(state.blockquote)} onMouseDown={mousedown(() => editor.chain().focus().toggleBlockquote().run())}>Quote</button>
+        <button type="button" className={btn(editor.isActive("bold"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBold().run())}>Bold</button>
+        <button type="button" className={btn(editor.isActive("italic"))} onMouseDown={mousedown(() => editor.chain().focus().toggleItalic().run())}>Italic</button>
+        <button type="button" className={btn(editor.isActive("heading", { level: 2 }))} onMouseDown={mousedown(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}>H2</button>
+        <button type="button" className={btn(editor.isActive("bulletList"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBulletList().run())}>List</button>
+        <button type="button" className={btn(editor.isActive("orderedList"))} onMouseDown={mousedown(() => editor.chain().focus().toggleOrderedList().run())}>1. List</button>
+        <button type="button" className={btn(editor.isActive("blockquote"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBlockquote().run())}>Quote</button>
         <button
           type="button"
-          className={btn(state.link)}
+          className={btn(editor.isActive("link"))}
           onMouseDown={mousedown(() => {
             const url = window.prompt("URL");
             if (url) editor.chain().focus().setLink({ href: url }).run();
