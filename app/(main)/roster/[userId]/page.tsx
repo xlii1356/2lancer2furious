@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
+import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
 type Talent = { id: string; rank: number; data?: { name?: string; description?: string; ranks?: { name?: string; description?: string }[] } };
@@ -62,20 +62,25 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
         <p className="eyebrow">Union Administrative RM-4 Pilot Identification Protocol (IDENT) Record {pilot.id}</p>
 
         <div className="mt-6 flex flex-wrap gap-6">
-          <SplitPortrait pilotSrc={pilotPortrait} mechSrc={mechPortrait} />
-
-          {canEditArt && (
-            <div className="w-64 shrink-0 border border-separator bg-void p-4">
-              <p className="eyebrow">Manual art override</p>
-              <p className="mt-1 text-xs text-text-mid">Use these if the pilot file didn&apos;t include portrait art.</p>
-              <form action={setPilotArt} className="mt-3 space-y-4">
-                <input type="hidden" name="userId" value={row.user.id} />
-                <label className="block text-xs">Pilot art<ImageUpload name="portraitOverrideUrl" defaultValue={row.sheet.portraitOverrideUrl} /></label>
-                <label className="block text-xs">Mech art<ImageUpload name="mechPortraitOverrideUrl" defaultValue={row.sheet.mechPortraitOverrideUrl} /></label>
-                <button className="w-full">Save art</button>
-              </form>
-            </div>
-          )}
+          <div className="relative">
+            <SplitPortrait pilotSrc={pilotPortrait} mechSrc={mechPortrait} />
+            {canEditArt && (
+              <div className="absolute right-2 top-2 z-20">
+                <IconDisclosure label="Edit pilot/mech art">
+                  <div className="border border-separator bg-void p-4">
+                    <p className="eyebrow">Manual art override</p>
+                    <p className="mt-1 text-xs text-text-mid">Use these if the pilot file didn&apos;t include portrait art.</p>
+                    <form action={setPilotArt} className="mt-3 space-y-4">
+                      <input type="hidden" name="userId" value={row.user.id} />
+                      <label className="block text-xs">Pilot art<ImageUpload name="portraitOverrideUrl" defaultValue={row.sheet.portraitOverrideUrl} /></label>
+                      <label className="block text-xs">Mech art<ImageUpload name="mechPortraitOverrideUrl" defaultValue={row.sheet.mechPortraitOverrideUrl} /></label>
+                      <button className="w-full">Save art</button>
+                    </form>
+                  </div>
+                </IconDisclosure>
+              </div>
+            )}
+          </div>
 
           <div className="min-w-[280px] flex-1 space-y-5">
             <div>
