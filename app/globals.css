@@ -38,3 +38,19 @@
 .prose-content h1 { @apply font-display uppercase tracking-wide text-text-mid text-2xl mt-6; }
 .prose-content h2 { @apply font-display uppercase tracking-wide text-text-hi text-xl mt-5; }
 .prose-content img { max-width: 100%; }
+
+@keyframes terminal-scroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes terminal-scroll-reverse {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+@keyframes globe-spin {
+  from { transform: rotateY(0deg) rotateX(8deg); }
+  to { transform: rotateY(360deg) rotateX(8deg); }
+}
+.animate-terminal-scroll { animation: terminal-scroll 40s linear infinite; }
+.animate-terminal-scroll-reverse { animation: terminal-scroll-reverse 46s linear infinite; }
+.animate-globe-spin { animation: globe-spin 30s linear infinite; }

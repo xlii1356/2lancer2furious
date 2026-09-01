@@ -15,10 +15,14 @@ export function RichTextEditor({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [, forceUpdate] = useState(0);
   const editor = useEditor({
     extensions: [StarterKit, Link, Image],
     content: defaultValue || { type: "doc", content: [{ type: "paragraph" }] },
     immediatelyRender: false,
+    // Re-render the toolbar on every transaction (typing, selection change, etc.)
+    // so the active/inactive button states stay accurate.
+    onTransaction: () => forceUpdate((n) => n + 1),
   });
 
   useEffect(() => {
@@ -39,8 +43,9 @@ export function RichTextEditor({
     try {
       const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/upload" });
       editor.chain().focus().setImage({ src: blob.url }).run();
-    } catch {
-      window.alert("Image upload failed. Try a smaller image or a different file.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      window.alert(`Image upload failed: ${message}`);
     } finally {
       setImageUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -54,26 +59,35 @@ export function RichTextEditor({
       active ? "bg-primary text-void" : "bg-void text-text-mid hover:text-white"
     }`;
 
+  // Toolbar buttons use onMouseDown (not onClick) to run editor commands, with
+  // preventDefault to stop the button from stealing focus away from the editor first.
+  // Without this, the editor blurs before the click registers, which desyncs the
+  // active/inactive toggle state and makes marks like Bold feel "stuck".
+  const mousedown = (fn: () => void) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    fn();
+  };
+
   return (
     <div className="border border-separator bg-void">
       <div className="flex flex-wrap gap-1 border-b border-separator p-2">
-        <button type="button" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}>Bold</button>
-        <button type="button" className={btn(editor.isActive("italic"))} onClick={() => editor.chain().focus().toggleItalic().run()}>Italic</button>
-        <button type="button" className={btn(editor.isActive("heading", { level: 2 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
-        <button type="button" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}>List</button>
-        <button type="button" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</button>
-        <button type="button" className={btn(editor.isActive("blockquote"))} onClick={() => editor.chain().focus().toggleBlockquote().run()}>Quote</button>
+        <button type="button" className={btn(editor.isActive("bold"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBold().run())}>Bold</button>
+        <button type="button" className={btn(editor.isActive("italic"))} onMouseDown={mousedown(() => editor.chain().focus().toggleItalic().run())}>Italic</button>
+        <button type="button" className={btn(editor.isActive("heading", { level: 2 }))} onMouseDown={mousedown(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}>H2</button>
+        <button type="button" className={btn(editor.isActive("bulletList"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBulletList().run())}>List</button>
+        <button type="button" className={btn(editor.isActive("orderedList"))} onMouseDown={mousedown(() => editor.chain().focus().toggleOrderedList().run())}>1. List</button>
+        <button type="button" className={btn(editor.isActive("blockquote"))} onMouseDown={mousedown(() => editor.chain().focus().toggleBlockquote().run())}>Quote</button>
         <button
           type="button"
           className={btn(editor.isActive("link"))}
-          onClick={() => {
+          onMouseDown={mousedown(() => {
             const url = window.prompt("URL");
             if (url) editor.chain().focus().setLink({ href: url }).run();
-          }}
+          })}
         >
           Link
         </button>
-        <button type="button" className={btn(false)} disabled={imageUploading} onClick={() => fileInputRef.current?.click()}>
+        <button type="button" className={btn(false)} disabled={imageUploading} onMouseDown={mousedown(() => fileInputRef.current?.click())}>
           {imageUploading ? "Uploading..." : "Image"}
         </button>
         <input

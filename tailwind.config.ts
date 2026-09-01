@@ -7,7 +7,7 @@ export default {
         void: "#0d1112",
         surface: "#171d1e",
         "surface-translucent": "rgba(23, 29, 30, 0.8)",
-        primary: "#7dbbbb",
+        primary: "#c83232",
         "primary-logo": "#0c3c40",
         "secondary-logo": "#146464",
         "text-hi": "rgba(255, 255, 255, 0.87)",
