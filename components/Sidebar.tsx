@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 const NAV_ITEMS = [
   { href: "/", icon: "/icons/campaign.svg", label: "Missions" },
   { href: "/factions", icon: "/icons/factions.svg", label: "Factions" },
+  { href: "/roster", icon: "/icons/squad.svg", label: "Pilot Roster" },
   { href: "/profile", icon: "/icons/portrait.svg", label: "Profile" },
 ];
 
-const ADMIN_NAV_ITEMS = [{ href: "/admin/members", icon: "/icons/squad.svg", label: "Members" }];
+const ADMIN_NAV_ITEMS: { href: string; icon: string; label: string }[] = [];
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
