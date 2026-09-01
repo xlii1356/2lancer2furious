@@ -1,4 +1,4 @@
-import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { currentUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
+import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { currentUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
 import { DeleteButton } from "@/components/DeleteButton";
 
 type Mech = { name: string; frame: string | null };
@@ -39,14 +39,14 @@ export default async function RosterPage() {
       <section className="mt-8 border border-separator bg-surface p-5">
         <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Your pilot</h2>
         {mySheet ? (
-          <div className="mt-4 flex items-start gap-4">
+          <Link href={`/roster/${user.id}`} className="mt-4 flex items-start gap-4 no-underline hover:opacity-90">
             {mySheet.portraitUrl && <Image src={mySheet.portraitUrl} alt="" width={72} height={72} className="h-18 w-18 shrink-0 border border-separator object-cover" unoptimized />}
             <div>
               <p className="font-semibold text-text-hi">{mySheet.callsign || mySheet.name}</p>
               <p className="text-sm text-text-mid">{mySheet.name}{mySheet.background ? ` · ${mySheet.background}` : ""}</p>
               <p className="mt-1 text-sm text-text-mid">{(mySheet.mechs as Mech[]).map((m) => m.name).join(", ") || "No mechs"}</p>
             </div>
-          </div>
+          </Link>
         ) : (
           <p className="mt-2 text-text-mid">No pilot imported yet.</p>
         )}
@@ -61,7 +61,7 @@ export default async function RosterPage() {
         <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">All pilots</h2>
         <div className="mt-4 divide-y divide-separator border border-separator bg-surface">
           {roster.map(({ sheet, user: pilotUser }) => (
-            <div key={sheet.id} className="flex items-center gap-4 p-5 text-text-hi">
+            <Link key={sheet.id} href={`/roster/${pilotUser.id}`} className="flex items-center gap-4 p-5 text-text-hi no-underline hover:bg-white/5">
               {sheet.portraitUrl ? (
                 <Image src={sheet.portraitUrl} alt="" width={56} height={56} className="h-14 w-14 shrink-0 border border-separator object-cover" unoptimized />
               ) : (
@@ -72,7 +72,7 @@ export default async function RosterPage() {
                 <p className="text-sm text-text-mid">{sheet.name}{sheet.background ? ` · ${sheet.background}` : ""}{sheet.status ? ` · ${sheet.status}` : ""}</p>
                 <p className="mt-1 text-sm text-text-mid">{(sheet.mechs as Mech[]).map((m) => m.name).join(", ") || "No mechs"}</p>
               </div>
-            </div>
+            </Link>
           ))}
           {!roster.length && <p className="p-5 text-text-mid">No pilots imported yet.</p>}
         </div>
