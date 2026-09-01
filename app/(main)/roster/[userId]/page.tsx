@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait";
+import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
 type Talent = { id: string; rank: number; data?: { name?: string; description?: string; ranks?: { name?: string; description?: string }[] } };
@@ -26,17 +26,19 @@ function romanRank(n: number) {
 
 export default async function PilotDetailPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
+  const viewer = await currentUser();
   const row = await db.select({ sheet: pilotSheets, user: users }).from(pilotSheets).innerJoin(users, eq(users.id, pilotSheets.userId)).where(eq(pilotSheets.userId, userId)).then((r) => r[0]);
   if (!row) notFound();
 
   const pilot = (row.sheet.raw as { data?: Pilot })?.data;
   if (!pilot) notFound();
 
+  const canEditArt = viewer.id === row.user.id || viewer.role === "admin";
   const mech = pilot.mechs?.[0];
   const loadout = mech?.loadouts?.[0];
   const [hull = 0, agi = 0, sys = 0, eng = 0] = pilot.mechSkills || [];
-  const pilotPortrait = pilot.img?.cloud_portrait || pilot.img?.portrait || "/icons/portrait.svg";
-  const mechPortrait = mech?.img?.cloud_portrait || mech?.img?.portrait || "/icons/clockwork.svg";
+  const pilotPortrait = row.sheet.portraitOverrideUrl || pilot.img?.cloud_portrait || pilot.img?.portrait || "/icons/portrait.svg";
+  const mechPortrait = row.sheet.mechPortraitOverrideUrl || mech?.img?.cloud_portrait || mech?.img?.portrait || "/icons/clockwork.svg";
 
   const weapons = (loadout?.mounts || [])
     .flatMap((m) => m.slots || [])
@@ -61,6 +63,19 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
 
         <div className="mt-6 flex flex-wrap gap-6">
           <SplitPortrait pilotSrc={pilotPortrait} mechSrc={mechPortrait} />
+
+          {canEditArt && (
+            <div className="w-64 shrink-0 border border-separator bg-void p-4">
+              <p className="eyebrow">Manual art override</p>
+              <p className="mt-1 text-xs text-text-mid">Use these if the pilot file didn&apos;t include portrait art.</p>
+              <form action={setPilotArt} className="mt-3 space-y-4">
+                <input type="hidden" name="userId" value={row.user.id} />
+                <label className="block text-xs">Pilot art<ImageUpload name="portraitOverrideUrl" defaultValue={row.sheet.portraitOverrideUrl} /></label>
+                <label className="block text-xs">Mech art<ImageUpload name="mechPortraitOverrideUrl" defaultValue={row.sheet.mechPortraitOverrideUrl} /></label>
+                <button className="w-full">Save art</button>
+              </form>
+            </div>
+          )}
 
           <div className="min-w-[280px] flex-1 space-y-5">
             <div>

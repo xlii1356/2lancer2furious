@@ -10,6 +10,7 @@ export default async function RosterPage() {
   const roster = await db.select({ sheet: pilotSheets, user: users }).from(pilotSheets).innerJoin(users, eq(users.id, pilotSheets.userId));
   const mySheet = roster.find((r) => r.user.id === user.id)?.sheet;
   const members = isAdmin ? await db.select().from(allowedEmails) : [];
+  const allUsers = isAdmin ? await db.select().from(users) : [];
 
   return (
     <>
@@ -40,7 +41,7 @@ export default async function RosterPage() {
         <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Your pilot</h2>
         {mySheet ? (
           <Link href={`/roster/${user.id}`} className="mt-4 flex items-start gap-4 no-underline hover:opacity-90">
-            {mySheet.portraitUrl && <Image src={mySheet.portraitUrl} alt="" width={72} height={72} className="h-18 w-18 shrink-0 border border-separator object-cover" unoptimized />}
+            {(mySheet.portraitOverrideUrl || mySheet.portraitUrl) && <Image src={mySheet.portraitOverrideUrl || mySheet.portraitUrl!} alt="" width={72} height={72} className="h-18 w-18 shrink-0 border border-separator object-cover" unoptimized />}
             <div>
               <p className="font-semibold text-text-hi">{mySheet.callsign || mySheet.name}</p>
               <p className="text-sm text-text-mid">{mySheet.name}{mySheet.background ? ` · ${mySheet.background}` : ""}</p>
@@ -57,13 +58,29 @@ export default async function RosterPage() {
         {mySheet && <div className="mt-2"><DeleteButton action={deleteMyPilot} label="pilot" /></div>}
       </section>
 
+      {isAdmin && (
+        <section className="mt-8 border border-separator bg-surface p-5">
+          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Import for another pilot</h2>
+          <form action={importPilotJson} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
+            <select name="userId" required defaultValue="">
+              <option value="" disabled>Choose a pilot...</option>
+              {allUsers.map((u) => (
+                <option key={u.id} value={u.id}>{u.username || u.email}</option>
+              ))}
+            </select>
+            <input type="file" name="file" accept="application/json,.json" required />
+            <button>Import</button>
+          </form>
+        </section>
+      )}
+
       <section className="mt-8">
         <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">All pilots</h2>
         <div className="mt-4 divide-y divide-separator border border-separator bg-surface">
           {roster.map(({ sheet, user: pilotUser }) => (
             <Link key={sheet.id} href={`/roster/${pilotUser.id}`} className="flex items-center gap-4 p-5 text-text-hi no-underline hover:bg-white/5">
-              {sheet.portraitUrl ? (
-                <Image src={sheet.portraitUrl} alt="" width={56} height={56} className="h-14 w-14 shrink-0 border border-separator object-cover" unoptimized />
+              {sheet.portraitOverrideUrl || sheet.portraitUrl ? (
+                <Image src={sheet.portraitOverrideUrl || sheet.portraitUrl!} alt="" width={56} height={56} className="h-14 w-14 shrink-0 border border-separator object-cover" unoptimized />
               ) : (
                 <div className="h-14 w-14 shrink-0 border border-separator bg-void" />
               )}

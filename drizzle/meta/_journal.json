@@ -29,6 +29,13 @@
       "when": 3,
       "tag": "0004_pilot_sheets",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 4,
+      "tag": "0005_pilot_art_overrides",
+      "breakpoints": true
     }
   ]
 }

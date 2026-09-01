@@ -3,8 +3,16 @@ import { db } from "@/db"; import { pilotSheets } from "@/db/schema"; import { c
 
 type RawMech = { name?: string; frame?: string };
 
-export async function importPilotJson(formData: FormData) {
+async function resolveTargetUserId(formData: FormData) {
   const user = await currentUser();
+  const requested = String(formData.get("userId") || "").trim();
+  if (!requested || requested === user.id) return user.id;
+  if (user.role !== "admin") throw new Error("Not authorized to act on behalf of another pilot");
+  return requested;
+}
+
+export async function importPilotJson(formData: FormData) {
+  const targetUserId = await resolveTargetUserId(formData);
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) throw new Error("Choose a pilot JSON file to import");
   if (file.size > 5 * 1024 * 1024) throw new Error("File is too large");
@@ -32,14 +40,30 @@ export async function importPilotJson(formData: FormData) {
 
   await db
     .insert(pilotSheets)
-    .values({ userId: user.id, callsign, name, background, status, portraitUrl, mechs, raw: parsed as object })
+    .values({ userId: targetUserId, callsign, name, background, status, portraitUrl, mechs, raw: parsed as object })
     .onConflictDoUpdate({
       target: pilotSheets.userId,
       set: { callsign, name, background, status, portraitUrl, mechs, raw: parsed as object, updatedAt: new Date() },
     });
 
   revalidatePath("/roster");
+  revalidatePath(`/roster/${targetUserId}`);
   redirect("/roster");
+}
+
+export async function setPilotArt(formData: FormData) {
+  const targetUserId = await resolveTargetUserId(formData);
+  const portraitOverrideUrl = String(formData.get("portraitOverrideUrl") || "") || null;
+  const mechPortraitOverrideUrl = String(formData.get("mechPortraitOverrideUrl") || "") || null;
+
+  const existing = await db.query.pilotSheets.findFirst({ where: eq(pilotSheets.userId, targetUserId) });
+  if (!existing) throw new Error("Import a pilot JSON for this pilot first");
+
+  await db.update(pilotSheets).set({ portraitOverrideUrl, mechPortraitOverrideUrl, updatedAt: new Date() }).where(eq(pilotSheets.userId, targetUserId));
+
+  revalidatePath(`/roster/${targetUserId}`);
+  revalidatePath("/roster");
+  redirect(`/roster/${targetUserId}`);
 }
 
 export async function deleteMyPilot() {
