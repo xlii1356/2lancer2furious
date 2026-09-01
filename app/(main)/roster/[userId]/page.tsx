@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
-type Talent = { id: string; rank: number; data?: { name?: string } };
+type Talent = { id: string; rank: number; data?: { name?: string; description?: string; ranks?: { name?: string; description?: string }[] } };
 type License = { id: string; rank: number; stub?: { name?: string; source?: string } };
 type WeaponData = { name?: string; type?: string; mount?: string; damage?: { type: string; val: string }[]; range?: { type: string; val: number }[] };
 type Mount = { mount_type?: string; slots?: { weapon?: { data?: WeaponData } | null }[] };
@@ -96,9 +96,22 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
                 <p className="eyebrow">Pilot Talent Audit</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {(pilot.talents || []).map((t) => (
-                    <span key={t.id} className="border border-separator bg-void px-2 py-1 text-xs text-text-hi">
-                      {t.data?.name || t.id} {romanRank(t.rank)}
-                    </span>
+                    <div key={t.id} className="group relative">
+                      <span className="cursor-default border border-separator bg-void px-2 py-1 text-xs text-text-hi">
+                        {t.data?.name || t.id} {romanRank(t.rank)}
+                      </span>
+                      {t.data?.description && (
+                        <div className="invisible absolute left-0 top-full z-30 mt-1 w-80 border border-separator bg-void p-3 text-xs text-text-hi opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100">
+                          <p className="font-semibold text-primary">{t.data.name}</p>
+                          <p className="mt-1 text-text-mid">{t.data.description}</p>
+                          {(t.data.ranks || []).slice(0, t.rank).map((r, i) => (
+                            <p key={i} className="mt-2">
+                              <b className="text-text-hi">{r.name}:</b> <span className="text-text-mid">{r.description}</span>
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
