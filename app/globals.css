@@ -39,6 +39,30 @@
 .prose-content h2 { @apply font-display uppercase tracking-wide text-text-hi text-xl mt-5; }
 .prose-content img { max-width: 100%; }
 
+.scan-content { font-family: theme("fontFamily.label"); line-height: 1.6; }
+.scan-content * { color: theme("colors.text-hi") !important; }
+.scan-content h2 {
+  font-family: theme("fontFamily.mono");
+  color: theme("colors.primary") !important;
+  border-bottom: 1px solid theme("colors.separator");
+  margin-top: 1.25rem; margin-bottom: 0.75rem;
+  font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.scan-content h3 {
+  font-family: theme("fontFamily.mono");
+  color: theme("colors.text-mid") !important;
+  margin-top: 1rem; margin-bottom: 0.5rem;
+  font-size: 1rem; text-transform: uppercase;
+}
+.scan-content p { margin-bottom: 0.625rem; }
+.scan-content img { max-width: 100%; border: 1px solid theme("colors.separator") !important; }
+.scan-content div[style] { width: 100% !important; float: none !important; }
+.scan-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; font-size: 0.875rem; background: theme("colors.void") !important; font-family: theme("fontFamily.mono"); }
+.scan-content th { background-color: rgba(200, 50, 50, 0.15) !important; color: theme("colors.primary") !important; font-weight: bold; text-align: left; padding: 0.5rem; border: 1px solid theme("colors.separator"); text-transform: uppercase; }
+.scan-content td { padding: 0.5rem; border: 1px solid theme("colors.separator"); color: theme("colors.text-mid") !important; }
+.scan-content details { margin-bottom: 0.625rem; border: 1px solid theme("colors.separator"); padding: 0.625rem; background: theme("colors.void") !important; }
+.scan-content summary { cursor: pointer; font-weight: bold; color: theme("colors.primary") !important; font-family: theme("fontFamily.mono"); }
+
 @keyframes terminal-scroll {
   from { transform: translateY(0); }
   to { transform: translateY(-50%); }
