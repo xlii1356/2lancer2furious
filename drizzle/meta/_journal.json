@@ -43,6 +43,13 @@
       "when": 5,
       "tag": "0006_mech_scans",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 6,
+      "tag": "0007_event_multi_dates",
+      "breakpoints": true
     }
   ]
 }
