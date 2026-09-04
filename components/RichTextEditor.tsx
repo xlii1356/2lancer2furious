@@ -15,14 +15,14 @@ export function RichTextEditor({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
-  const [, forceUpdate] = useState(0);
   const editor = useEditor({
     extensions: [StarterKit, Link, Image],
     content: defaultValue || { type: "doc", content: [{ type: "paragraph" }] },
     immediatelyRender: false,
-    // Re-render the toolbar on every transaction (typing, selection change, etc.)
-    // so the active/inactive button states stay accurate.
-    onTransaction: () => forceUpdate((n) => n + 1),
+    // Tiptap's own supported mechanism for keeping toolbar active-states in sync.
+    // Avoid rolling a manual onTransaction+forceUpdate pattern here — it can
+    // cause render loops if anything during a re-render nudges the editor state.
+    shouldRerenderOnTransaction: true,
   });
 
   useEffect(() => {
