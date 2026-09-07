@@ -25,11 +25,10 @@ export function RichTextEditor({
     shouldRerenderOnTransaction: true,
   });
 
-  // Ensure editor gets proper focus when component mounts
+  // Focus the editor once it is ready so the user can type immediately.
   useEffect(() => {
     if (editor) {
-      // Focus the editor on mount to ensure it's ready for input
-      editor.commands.focus();
+      editor.commands.focus("end");
     }
   }, [editor]);
 
@@ -73,100 +72,51 @@ export function RichTextEditor({
   // active/inactive toggle state and makes marks like Bold feel "stuck".
   const mousedown = (fn: () => void) => (e: React.MouseEvent) => {
     e.preventDefault();
-    // Ensure editor is focused before executing the command
-    if (editor) {
-      // Add a small delay to ensure proper focus handling
-      setTimeout(() => {
-        editor.commands.focus();
-      }, 0);
-    }
     fn();
   };
 
   return (
     <div className="border border-separator bg-void">
       <div className="flex flex-wrap gap-1 border-b border-separator p-2">
-        <button 
-          type="button" 
-          className={btn(editor.isActive("bold"))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("bold"))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleBold().run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           Bold
         </button>
-        <button 
-          type="button" 
-          className={btn(editor.isActive("italic"))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("italic"))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleItalic().run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           Italic
         </button>
-        <button 
-          type="button" 
-          className={btn(editor.isActive("heading", { level: 2 }))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("heading", { level: 2 }))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           H2
         </button>
-        <button 
-          type="button" 
-          className={btn(editor.isActive("bulletList"))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("bulletList"))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleBulletList().run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           List
         </button>
-        <button 
-          type="button" 
-          className={btn(editor.isActive("orderedList"))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("orderedList"))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleOrderedList().run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           1. List
         </button>
-        <button 
-          type="button" 
-          className={btn(editor.isActive("blockquote"))} 
+        <button
+          type="button"
+          className={btn(editor.isActive("blockquote"))}
           onMouseDown={mousedown(() => editor.chain().focus().toggleBlockquote().run())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           Quote
         </button>
@@ -177,28 +127,14 @@ export function RichTextEditor({
             const url = window.prompt("URL");
             if (url) editor.chain().focus().setLink({ href: url }).run();
           })}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           Link
         </button>
-        <button 
-          type="button" 
-          className={btn(false)} 
-          disabled={imageUploading} 
+        <button
+          type="button"
+          className={btn(false)}
+          disabled={imageUploading}
           onMouseDown={mousedown(() => fileInputRef.current?.click())}
-          onFocus={(e) => {
-            // Prevent the button from stealing focus from the editor
-            e.preventDefault();
-            if (editor && document.activeElement === e.currentTarget) {
-              editor.commands.focus();
-            }
-          }}
         >
           {imageUploading ? "Uploading..." : "Image"}
         </button>
@@ -210,21 +146,10 @@ export function RichTextEditor({
           onChange={(e) => handleImageFile(e.target.files?.[0])}
         />
       </div>
-      <EditorContent 
-        editor={editor} 
+      <EditorContent
+        editor={editor}
         className="prose-content min-h-[200px] px-3 py-2 text-text-hi [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:outline-none"
-        onClick={() => {
-          // Ensure editor gets focus when user clicks on the content area
-          if (editor) {
-            editor.commands.focus();
-          }
-        }}
-        onMouseDown={(e) => {
-          // Ensure editor gets focus when user clicks on the content area
-          if (editor && !e.target?.matches('.ProseMirror')) {
-            editor.commands.focus();
-          }
-        }}
+        onClick={() => editor?.commands.focus()}
       />
       <input type="hidden" name={name} />
     </div>
