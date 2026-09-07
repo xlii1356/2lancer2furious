@@ -11,7 +11,7 @@ export default async function NewFaction({ searchParams }: { searchParams: Promi
         {faction && <input type="hidden" name="id" value={faction.id} />}
         <label>Name<input name="name" required defaultValue={faction?.name} /></label>
         <label>Picture<ImageUpload name="imageUrl" defaultValue={faction?.imageUrl} /></label>
-        <label>Description<RichTextEditor name="body" defaultValue={faction?.body as object} /></label>
+        <div>Description<RichTextEditor name="body" defaultValue={faction?.body as object} /></div>
         <button>{faction ? "Save changes" : "Post"}</button>
       </form>
     </>

@@ -76,7 +76,10 @@ export function RichTextEditor({
   };
 
   return (
-    <div className="border border-separator bg-void">
+    <div
+      className="border border-separator bg-void"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="flex flex-wrap gap-1 border-b border-separator p-2">
         <button
           type="button"

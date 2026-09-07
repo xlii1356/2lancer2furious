@@ -12,7 +12,7 @@ export default async function Respond({ params }: { params: Promise<{ slug: stri
         <input type="hidden" name="eventId" value={event.id} />
         <input type="hidden" name="slug" value={slug} />
         <label>Posted as<input name="byline" defaultValue={response?.byline || user.username || ""} maxLength={60} /></label>
-        <label>Writeup<RichTextEditor name="body" defaultValue={response?.body as object} /></label>
+        <div>Writeup<RichTextEditor name="body" defaultValue={response?.body as object} /></div>
         <button>{response ? "Update writeup" : "Post writeup"}</button>
       </form>
     </>
