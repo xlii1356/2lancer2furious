@@ -50,6 +50,13 @@
       "when": 6,
       "tag": "0007_event_multi_dates",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 7,
+      "tag": "0008_intel",
+      "breakpoints": true
     }
   ]
 }

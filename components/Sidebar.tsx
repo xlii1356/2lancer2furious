@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/", icon: "/icons/campaign.svg", label: "Missions" },
-  { href: "/factions", icon: "/icons/factions.svg", label: "Factions" },
+  { href: "/intel", icon: "/icons/factions.svg", label: "Intel" },
   { href: "/roster", icon: "/icons/squad.svg", label: "Pilot Roster" },
   { href: "/scans", icon: "/icons/mech.svg", label: "Mech Scans" },
   { href: "/profile", icon: "/icons/portrait.svg", label: "Profile" },
