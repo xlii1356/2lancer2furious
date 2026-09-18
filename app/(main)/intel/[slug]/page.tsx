@@ -1,4 +1,16 @@
-import Link from "next/link"; import Image from "next/image"; import { notFound } from "next/navigation"; import { db } from "@/db"; import { intelEntries, intelNotes, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers"; import { deleteIntelEntry } from "@/app/actions/intel"; import { saveIntelNotes } from "@/app/actions/intelNotes"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle"; import { DeleteButton } from "@/components/DeleteButton";
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { db } from "@/db";
+import { intelEntries, intelNotes, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { currentUser } from "@/app/actions/helpers";
+import { deleteIntelEntry } from "@/app/actions/intel";
+import { saveIntelNotes } from "@/app/actions/intelNotes";
+import { TiptapRenderer } from "@/components/TiptapRenderer";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { NotesToggle } from "@/components/NotesToggle";
+import { DeleteButton } from "@/components/DeleteButton";
 
 const emptyDoc = { type: "doc", content: [{ type: "paragraph" }] };
 
@@ -21,11 +33,21 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
         {isAdmin && <div className="flex shrink-0 gap-2"><Link className="button" href={`/intel/new?id=${entry.id}`}>Edit</Link><DeleteButton action={deleteIntelEntry.bind(null, entry.id)} label="intel entry" /></div>}
       </div>
 
-      {entry.imageUrl && (
-        <Image src={entry.imageUrl} alt={entry.name} width={320} height={320} className="mt-6 w-full max-w-xs border border-separator object-cover" unoptimized />
-      )}
-
-      <div className="prose-content mt-8 text-text-hi"><TiptapRenderer document={entry.body as never} /></div>
+      <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row">
+        {entry.imageUrl && (
+          <Image
+            src={entry.imageUrl}
+            alt={entry.name}
+            width={240}
+            height={240}
+            className="w-48 shrink-0 border border-separator object-cover sm:w-60"
+            unoptimized
+          />
+        )}
+        <div className="prose-content min-w-0 flex-1 text-text-hi">
+          <TiptapRenderer document={entry.body as never} />
+        </div>
+      </div>
 
       <section className="mt-10 border-t border-separator pt-6">
         <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-hi">Notes</h2>
