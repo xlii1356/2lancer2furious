@@ -1,4 +1,4 @@
-import Link from "next/link"; import Image from "next/image"; import { notFound } from "next/navigation"; import { db } from "@/db"; import { intelEntries, intelNotes, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers"; import { deleteIntelEntry } from "@/app/actions/intel"; import { saveIntelNotes } from "@/app/actions/intelNotes"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { IconDisclosure } from "@/components/IconDisclosure"; import { DeleteButton } from "@/components/DeleteButton";
+import Link from "next/link"; import Image from "next/image"; import { notFound } from "next/navigation"; import { db } from "@/db"; import { intelEntries, intelNotes, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers"; import { deleteIntelEntry } from "@/app/actions/intel"; import { saveIntelNotes } from "@/app/actions/intelNotes"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle"; import { DeleteButton } from "@/components/DeleteButton";
 
 const emptyDoc = { type: "doc", content: [{ type: "paragraph" }] };
 
@@ -28,11 +28,25 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
       <div className="prose-content mt-8 text-text-hi"><TiptapRenderer document={entry.body as never} /></div>
 
       <section className="mt-10 border-t border-separator pt-6">
-        <div className="flex items-center gap-2">
-          <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-hi">Notes</h2>
-          <IconDisclosure label="Edit notes">
+        <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-hi">Notes</h2>
+        {notesRow?.note.updatedBy && (
+          <p className="mt-1 text-xs text-text-mid">
+            Last edited by {notesRow.editor?.username || notesRow.editor?.name} · {notesRow.note.updatedAt.toLocaleString()}
+          </p>
+        )}
+        <NotesToggle
+          readView={
+            notesRow ? (
+              <div className="prose-content text-text-hi">
+                <TiptapRenderer document={notesRow.note.body as never} />
+              </div>
+            ) : (
+              <p className="text-text-mid">No notes yet — click the pencil to add some.</p>
+            )
+          }
+          editView={
             <div className="border border-separator bg-void p-4">
-              <p className="mt-1 text-xs text-text-mid">Shared notes any pilot can add to or edit.</p>
+              <p className="text-xs text-text-mid">Shared notes any pilot can add to or edit.</p>
               <form action={saveIntelNotes} className="mt-3 space-y-3">
                 <input type="hidden" name="entryId" value={entry.id} />
                 <input type="hidden" name="slug" value={slug} />
@@ -40,20 +54,8 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
                 <button className="w-full">Save notes</button>
               </form>
             </div>
-          </IconDisclosure>
-        </div>
-        {notesRow?.note.updatedBy && (
-          <p className="mt-1 text-xs text-text-mid">
-            Last edited by {notesRow.editor?.username || notesRow.editor?.name} · {notesRow.note.updatedAt.toLocaleString()}
-          </p>
-        )}
-        {notesRow ? (
-          <div className="prose-content mt-3 text-text-hi">
-            <TiptapRenderer document={notesRow.note.body as never} />
-          </div>
-        ) : (
-          <p className="mt-3 text-text-mid">No notes yet — click the edit icon above to add some.</p>
-        )}
+          }
+        />
       </section>
     </article>
   );

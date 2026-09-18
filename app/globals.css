@@ -37,6 +37,11 @@
 .prose-content { line-height: 1.75; @apply text-text-hi; }
 .prose-content h1 { @apply font-display uppercase tracking-wide text-text-mid text-2xl mt-6; }
 .prose-content h2 { @apply font-display uppercase tracking-wide text-text-hi text-xl mt-5; }
+.prose-content ul { list-style: disc; padding-left: 1.5rem; }
+.prose-content ol { list-style: decimal; padding-left: 1.5rem; }
+.prose-content li { margin: 0.25rem 0; }
+.prose-content blockquote { border-left: 4px solid theme("colors.separator"); padding-left: 1rem; font-style: italic; }
+.prose-content a { text-decoration: underline; }
 .prose-content img { max-width: 100%; }
 
 .scan-content { font-family: theme("fontFamily.label"); line-height: 1.6; }

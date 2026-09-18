@@ -8,7 +8,6 @@ const NAV_ITEMS = [
   { href: "/intel", icon: "/icons/factions.svg", label: "Intel" },
   { href: "/roster", icon: "/icons/squad.svg", label: "Pilot Roster" },
   { href: "/scans", icon: "/icons/mech.svg", label: "Mech Scans" },
-  { href: "/profile", icon: "/icons/portrait.svg", label: "Profile" },
 ];
 
 const ADMIN_NAV_ITEMS: { href: string; icon: string; label: string }[] = [];

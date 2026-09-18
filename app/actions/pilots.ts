@@ -71,3 +71,11 @@ export async function deleteMyPilot() {
   await db.delete(pilotSheets).where(eq(pilotSheets.userId, user.id));
   revalidatePath("/roster");
 }
+
+export async function deletePilot(targetUserId: string) {
+  const user = await currentUser();
+  if (targetUserId !== user.id && user.role !== "admin") throw new Error("Not authorized");
+  await db.delete(pilotSheets).where(eq(pilotSheets.userId, targetUserId));
+  revalidatePath("/roster");
+  redirect("/roster");
+}
