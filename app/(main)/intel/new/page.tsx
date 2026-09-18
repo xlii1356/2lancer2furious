@@ -23,7 +23,7 @@ export default async function NewIntelEntry({ searchParams }: { searchParams: Pr
           </datalist>
         </label>
         <label>Picture<ImageUpload name="imageUrl" defaultValue={entry?.imageUrl} /></label>
-        <label>Write-up<RichTextEditor name="body" defaultValue={entry?.body as object} /></label>
+        <div>Write-up<RichTextEditor name="body" defaultValue={entry?.body as object} /></div>
         <button>{entry ? "Save changes" : "Post"}</button>
       </form>
     </>
