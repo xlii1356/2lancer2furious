@@ -1,7 +1,15 @@
 "use client";
 import { useState } from "react";
 
-export function IconDisclosure({ label, children }: { label: string; children: React.ReactNode }) {
+export function IconDisclosure({
+  label,
+  children,
+  panelClassName = "absolute left-0 top-full z-30 mt-2 w-64",
+}: {
+  label: string;
+  children: React.ReactNode;
+  panelClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
@@ -16,7 +24,7 @@ export function IconDisclosure({ label, children }: { label: string; children: R
           <path d="M13.5 3.5l3 3L6 17l-4 1 1-4L13.5 3.5z" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {open && <div className="absolute left-0 top-full z-30 mt-2 w-64">{children}</div>}
+      {open && <div className={panelClassName}>{children}</div>}
     </div>
   );
 }

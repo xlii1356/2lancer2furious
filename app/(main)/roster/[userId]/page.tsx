@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
+import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { AvatarCropper } from "@/components/AvatarCropper"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
 type Talent = { id: string; rank: number; data?: { name?: string; description?: string; ranks?: { name?: string; description?: string }[] } };
@@ -66,7 +66,7 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
             <SplitPortrait pilotSrc={pilotPortrait} mechSrc={mechPortrait} />
             {canEditArt && (
               <div className="absolute right-2 top-2 z-20">
-                <IconDisclosure label="Edit pilot/mech art">
+                <IconDisclosure label="Edit pilot/mech art" panelClassName="absolute left-0 top-full z-30 mt-2 w-80">
                   <div className="border border-separator bg-void p-4">
                     <p className="eyebrow">Manual art override</p>
                     <p className="mt-1 text-xs text-text-mid">Use these if the pilot file didn&apos;t include portrait art.</p>
@@ -76,6 +76,19 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
                       <label className="block text-xs">Mech art<ImageUpload name="mechPortraitOverrideUrl" defaultValue={row.sheet.mechPortraitOverrideUrl} /></label>
                       <button className="w-full">Save art</button>
                     </form>
+                    <div className="mt-5 border-t border-separator pt-4">
+                      <p className="eyebrow">Site avatar</p>
+                      {pilotPortrait !== "/icons/portrait.svg" ? (
+                        <>
+                          <p className="mt-1 text-xs text-text-mid">Crop the Pilot Visual above to use as {row.user.username || "this pilot"}&apos;s avatar around the site.</p>
+                          <div className="mt-3">
+                            <AvatarCropper imageSrc={pilotPortrait} userId={row.user.id} />
+                          </div>
+                        </>
+                      ) : (
+                        <p className="mt-1 text-xs text-text-mid">Set a Pilot art image above first, then you can crop it into an avatar.</p>
+                      )}
+                    </div>
                   </div>
                 </IconDisclosure>
               </div>
