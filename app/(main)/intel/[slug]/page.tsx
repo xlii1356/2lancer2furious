@@ -22,7 +22,7 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
       </div>
 
       {entry.imageUrl && (
-        <Image src={scaledImageSrc(entry.imageUrl)} alt={entry.name} width={240} height={240} className="float-left mr-6 mb-4 mt-6 w-48 border border-separator object-cover sm:w-60" unoptimized />
+        <Image src={scaledImageSrc(entry.imageUrl)} alt={entry.name} width={512} height={384} className="float-left mr-6 mb-4 mt-6 w-full max-w-[512px] border border-separator" unoptimized />
       )}
 
       <div className="prose-content mt-8 text-text-hi"><TiptapRenderer document={entry.body as never} /></div>
