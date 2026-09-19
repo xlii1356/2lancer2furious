@@ -1,12 +1,11 @@
-import Link from "next/link"; import Image from "next/image"; import { logout } from "@/app/actions/auth";
+import Link from "next/link"; import { logout } from "@/app/actions/auth";
 export function Header({ username, admin }: { username: string; admin: boolean }) {
   return (
     <header className="relative flex h-24 items-center bg-surface-translucent">
       <div className="z-[1] flex h-full items-center gap-4 bg-primary pl-6 pr-10">
-        <Image src="/faction-logos/silvershard_outline.webp" alt="" width={56} height={80} className="h-20 w-auto" />
         <div className="flex flex-col justify-center">
           <span className="font-display text-2xl font-extrabold uppercase leading-none tracking-[0.15em] text-void">
-            FiCo Corp
+            FiCo Corps
           </span>
           <span className="font-eyebrow text-xs font-bold uppercase tracking-[0.1em] text-void/70">
             Mission Briefing Terminal

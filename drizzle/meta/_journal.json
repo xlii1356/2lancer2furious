@@ -57,6 +57,13 @@
       "when": 7,
       "tag": "0008_intel",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 8,
+      "tag": "0009_briefing_and_population",
+      "breakpoints": true
     }
   ]
 }

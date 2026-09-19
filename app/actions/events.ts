@@ -23,4 +23,4 @@ export async function saveEvent(formData: FormData) {
   const [event] = await db.insert(events).values({ ...values, createdBy: user.id }).returning();
   redirect(`/events/${event.slug}`);
 }
-export async function deleteEvent(id: string) { await requireAdmin(); await db.delete(events).where(eq(events.id, id)); redirect("/"); }
+export async function deleteEvent(id: string) { await requireAdmin(); await db.delete(events).where(eq(events.id, id)); redirect("/missions"); }

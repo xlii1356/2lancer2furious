@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/app/actions/helpers"; import { saveIntelEntry } from "@/app/actions/intel"; import { RichTextEditor } from "@/components/RichTextEditor"; import { ImageUpload } from "@/components/ImageUpload"; import { db } from "@/db"; import { intelEntries } from "@/db/schema"; import { eq } from "drizzle-orm"; import { notFound } from "next/navigation";
 
-const SUGGESTED_CATEGORIES = ["Location", "Contact", "Faction", "Organization", "Event", "Person"];
+const SUGGESTED_CATEGORIES = ["Location", "Contact", "Population", "Organization", "Event", "Person"];
 
 export default async function NewIntelEntry({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
   await requireAdmin();
@@ -22,7 +22,7 @@ export default async function NewIntelEntry({ searchParams }: { searchParams: Pr
             ))}
           </datalist>
         </label>
-        <label>Picture<ImageUpload name="imageUrl" defaultValue={entry?.imageUrl} /></label>
+        <label>Picture<ImageUpload name="imageUrl" defaultValue={entry?.imageUrl} minDimension={512} /></label>
         <div>Write-up<RichTextEditor name="body" defaultValue={entry?.body as object} /></div>
         <button>{entry ? "Save changes" : "Post"}</button>
       </form>

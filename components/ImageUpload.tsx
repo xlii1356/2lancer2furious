@@ -3,7 +3,47 @@ import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 
-export function ImageUpload({ name, defaultValue, endpoint = "/api/upload" }: { name: string; defaultValue?: string | null; endpoint?: string }) {
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+async function upscaleIfNeeded(file: File, minDimension: number): Promise<File> {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(objectUrl);
+    const smallest = Math.min(img.naturalWidth, img.naturalHeight);
+    if (smallest >= minDimension || smallest === 0) return file;
+    const scale = minDimension / smallest;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(img.naturalWidth * scale);
+    canvas.height = Math.round(img.naturalHeight * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, file.type || "image/png", 0.92));
+    if (!blob) return file;
+    return new File([blob], file.name, { type: file.type || "image/png" });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+export function ImageUpload({
+  name,
+  defaultValue,
+  endpoint = "/api/upload",
+  minDimension,
+}: {
+  name: string;
+  defaultValue?: string | null;
+  endpoint?: string;
+  minDimension?: number;
+}) {
   const [url, setUrl] = useState(defaultValue || "");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +53,8 @@ export function ImageUpload({ name, defaultValue, endpoint = "/api/upload" }: { 
     setUploading(true);
     setError("");
     try {
-      const blob = await upload(file.name, file, { access: "public", handleUploadUrl: endpoint });
+      const toUpload = minDimension ? await upscaleIfNeeded(file, minDimension) : file;
+      const blob = await upload(toUpload.name, toUpload, { access: "public", handleUploadUrl: endpoint });
       setUrl(blob.url);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";

@@ -10,6 +10,9 @@ export default async function IntelPage() {
     arr.push(entry);
     groups.set(entry.category, arr);
   }
+  const sortedGroups = [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([category, entries]) => [category, [...entries].sort((a, b) => a.name.localeCompare(b.name))] as const);
 
   return (
     <>
@@ -20,7 +23,7 @@ export default async function IntelPage() {
 
       {!list.length && <p className="mt-6 text-text-mid">No intel entries posted yet.</p>}
 
-      {[...groups.entries()].map(([category, entries]) => (
+      {[...sortedGroups].map(([category, entries]) => (
         <section key={category} className="mt-8">
           <p className="eyebrow">{category}</p>
           <div className="mt-2 divide-y divide-separator border border-separator bg-surface">

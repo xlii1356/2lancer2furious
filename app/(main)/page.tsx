@@ -1,45 +1,50 @@
-import Link from "next/link"; import { db } from "@/db"; import { events, responses, signups, users } from "@/db/schema"; import { desc, eq, sql } from "drizzle-orm"; import { Avatar } from "@/components/Avatar";
+import { db } from "@/db"; import { briefing, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers"; import { saveBriefing } from "@/app/actions/briefing"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle";
 
-export default async function EventsPage() {
-  const list = await db.select({ event: events, responseCount: sql<number>`count(distinct ${responses.id})::int` }).from(events).leftJoin(responses, eq(responses.eventId, events.id)).groupBy(events.id).orderBy(desc(events.createdAt));
+const emptyDoc = { type: "doc", content: [{ type: "paragraph" }] };
 
-  const allSignups = await db.select({ signup: signups, user: users }).from(signups).innerJoin(users, eq(users.id, signups.userId));
-  const signupsByEvent = new Map<string, { id: string; avatarUrl: string | null; username: string | null }[]>();
-  for (const { signup, user } of allSignups) {
-    const arr = signupsByEvent.get(signup.eventId) || [];
-    arr.push({ id: user.id, avatarUrl: user.avatarUrl, username: user.username });
-    signupsByEvent.set(signup.eventId, arr);
-  }
+export default async function HomePage() {
+  const user = await currentUser();
+  const isAdmin = user.role === "admin";
+
+  const row = await db.select({ post: briefing, editor: users }).from(briefing).leftJoin(users, eq(users.id, briefing.updatedBy)).then((r) => r[0]);
 
   return (
-    <>
-      <h1 className="text-3xl font-bold">Missions</h1>
-      <div className="mt-6 divide-y divide-separator border border-separator bg-surface">
-        {list.map(({ event, responseCount }) => {
-          const dates = (event.eventDates as string[]) || [];
-          const claimants = signupsByEvent.get(event.id) || [];
-          const openSlots = event.slotCount ? Math.max(0, event.slotCount - claimants.length) : 0;
-          return (
-            <Link key={event.id} href={`/events/${event.slug}`} className="block p-5 text-text-hi no-underline hover:bg-white/5">
-              <h2 className="font-semibold text-text-hi">{event.title}</h2>
-              <p className="mt-1 text-sm text-text-mid">
-                {dates.length ? dates.join(", ") : "No date set"} · {responseCount} writeup{responseCount === 1 ? "" : "s"}
-              </p>
-              {event.slotCount && (
-                <div className="mt-2 flex items-center gap-1">
-                  {claimants.map((c) => (
-                    <Avatar key={c.id} id={c.id} url={c.avatarUrl} name={c.username} size={24} />
-                  ))}
-                  {Array.from({ length: openSlots }).map((_, i) => (
-                    <span key={i} className="h-6 w-6 shrink-0 rounded-full border border-separator bg-void" />
-                  ))}
-                </div>
-              )}
-            </Link>
-          );
-        })}
-        {!list.length && <p className="p-5 text-text-mid">No missions yet.</p>}
-      </div>
-    </>
+    <article>
+      <p className="eyebrow">Briefing</p>
+      <h1 className="mt-1 text-3xl font-bold text-text-hi">Home</h1>
+      {row?.post.updatedBy && (
+        <p className="mt-1 text-xs text-text-mid">
+          Last edited by {row.editor?.username || row.editor?.name} · {row.post.updatedAt.toLocaleString()}
+        </p>
+      )}
+
+      {isAdmin ? (
+        <NotesToggle
+          readView={
+            row ? (
+              <div className="prose-content text-text-hi">
+                <TiptapRenderer document={row.post.body as never} />
+              </div>
+            ) : (
+              <p className="text-text-mid">No briefing posted yet — click the pencil to write one.</p>
+            )
+          }
+          editView={
+            <div className="border border-separator bg-void p-4">
+              <form action={saveBriefing} className="space-y-3">
+                <RichTextEditor name="body" defaultValue={(row?.post.body as object) || emptyDoc} />
+                <button className="w-full">Save briefing</button>
+              </form>
+            </div>
+          }
+        />
+      ) : row ? (
+        <div className="prose-content mt-6 text-text-hi">
+          <TiptapRenderer document={row.post.body as never} />
+        </div>
+      ) : (
+        <p className="mt-6 text-text-mid">No briefing posted yet.</p>
+      )}
+    </article>
   );
 }
