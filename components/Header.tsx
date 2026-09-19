@@ -1,7 +1,7 @@
 import Link from "next/link"; import { logout } from "@/app/actions/auth";
 export function Header({ username, admin }: { username: string; admin: boolean }) {
   return (
-    <header className="relative flex h-24 items-center bg-surface-translucent">
+    <header className="relative z-50 flex h-24 items-center bg-surface-translucent">
       <div className="z-[1] flex h-full items-center gap-4 bg-primary pl-6 pr-10">
         <div className="flex flex-col justify-center">
           <span className="font-display text-2xl font-extrabold uppercase leading-none tracking-[0.15em] text-void">
