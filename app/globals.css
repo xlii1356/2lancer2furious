@@ -77,8 +77,8 @@
 .scan-content .scan-img-stat-container { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
 .scan-content .scan-img-stat-container > img { width: 140px; height: 140px; object-fit: cover; border: 1px solid theme("colors.separator") !important; background: theme("colors.void") !important; }
 .scan-content .scan-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(60px, 1fr)); gap: 0.5rem; flex: 1; min-width: 240px; }
-.scan-content .scan-stat-item { border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; text-align: center; padding: 0.4rem 0.25rem; font-family: theme("fontFamily.mono"); font-size: 0.9rem; }
-.scan-content .scan-stat-header { margin-bottom: 0.15rem; min-height: 1px; }
+.scan-content .scan-stat-item { position: relative; border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; text-align: center; padding: 1.15rem 0.25rem 0.4rem; font-family: theme("fontFamily.mono"); font-size: 0.9rem; }
+.scan-content .scan-stat-item[data-tooltip]::before { content: attr(data-tooltip); position: absolute; top: 0.3rem; left: 0.25rem; right: 0.25rem; font-family: theme("fontFamily.eyebrow"); font-size: 0.55rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.04em; color: theme("colors.text-mid") !important; }
 .scan-content i[class*="mdi-"], .scan-content i[class*="cci-"] { display: none; }
 .scan-content .scan-weapon-tech-container { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
 .scan-content details.scan-feature-list { border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; padding: 0.75rem; margin-bottom: 1rem; flex: 1; min-width: 260px; }
