@@ -19,9 +19,9 @@ export default async function ScansPage() {
       {isAdmin && (
         <section className="mt-6 border border-separator bg-surface p-5">
           <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Upload scans</h2>
-          <p className="mt-1 text-xs text-text-mid">Upload one or more HTML scan exports.</p>
+          <p className="mt-1 text-xs text-text-mid">Upload one or more Foundry scan exports (.json) or HTML files.</p>
           <form action={uploadMechScans} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
-            <input type="file" name="files" accept=".html,.htm,.txt" multiple required />
+            <input type="file" name="files" accept=".json,.html,.htm,.txt" multiple required />
             <button>Upload</button>
           </form>
         </section>

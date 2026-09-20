@@ -71,6 +71,36 @@
 .scan-content details { margin-bottom: 0.625rem; border: 1px solid theme("colors.separator"); padding: 0.625rem; background: theme("colors.void") !important; }
 .scan-content summary { cursor: pointer; font-weight: bold; color: theme("colors.primary") !important; font-family: theme("fontFamily.mono"); }
 
+/* --- Lancer NPC scan stat-block structure (Foundry scan-result export) --- */
+.scan-content .flexrow { display: flex; align-items: center; }
+.scan-content .scan-classes { font-family: theme("fontFamily.mono"); color: theme("colors.primary") !important; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.scan-content .scan-img-stat-container { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+.scan-content .scan-img-stat-container > img { width: 140px; height: 140px; object-fit: cover; border: 1px solid theme("colors.separator") !important; background: theme("colors.void") !important; }
+.scan-content .scan-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(60px, 1fr)); gap: 0.5rem; flex: 1; min-width: 240px; }
+.scan-content .scan-stat-item { border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; text-align: center; padding: 0.4rem 0.25rem; font-family: theme("fontFamily.mono"); font-size: 0.9rem; }
+.scan-content .scan-stat-header { margin-bottom: 0.15rem; min-height: 1px; }
+.scan-content i[class*="mdi-"], .scan-content i[class*="cci-"] { display: none; }
+.scan-content .scan-weapon-tech-container { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+.scan-content details.scan-feature-list { border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; padding: 0.75rem; margin-bottom: 1rem; flex: 1; min-width: 260px; }
+.scan-content details.scan-feature-list > summary.lancer-header { font-family: theme("fontFamily.mono"); color: theme("colors.primary") !important; text-transform: uppercase; letter-spacing: 0.05em; font-size: 1rem; padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid theme("colors.separator"); display: flex; align-items: center; gap: 0.4rem; }
+.scan-content .scan-feature-list ul { list-style: none; padding-left: 0; margin: 0; }
+.scan-content .scan-feature-card { margin-bottom: 0.75rem; }
+.scan-content .scan-feature-card:last-child { margin-bottom: 0; }
+.scan-content .scan-feature-card > details { border: 1px solid theme("colors.separator"); background: theme("colors.surface") !important; padding: 0.6rem 0.75rem; }
+.scan-content summary.scan-feature-title { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-family: theme("fontFamily.label"); color: theme("colors.text-hi") !important; font-size: 0.95rem; font-weight: bold; }
+.scan-content .scan-feature-type { font-size: 0.7rem; font-style: italic; color: theme("colors.text-low") !important; text-transform: uppercase; }
+.scan-content .mini-weapon-profile { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-family: theme("fontFamily.mono"); font-size: 0.85rem; color: theme("colors.text-mid") !important; }
+.scan-content .mini-weapon-profile-separator { color: theme("colors.text-low") !important; }
+.scan-content .effect-box { margin-top: 0.5rem; border: 1px solid theme("colors.separator"); background: theme("colors.void") !important; padding: 0.6rem 0.75rem; }
+.scan-content .effect-title { display: inline-block; background: theme("colors.primary") !important; color: theme("colors.void") !important; font-family: theme("fontFamily.mono"); font-size: 0.65rem; font-weight: bold; letter-spacing: 0.05em; padding: 0.1rem 0.4rem; margin-bottom: 0.4rem; }
+.scan-content .effect-text { display: block; color: theme("colors.text-hi") !important; font-size: 0.9rem; line-height: 1.5; }
+.scan-content .compact-tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.scan-content .compact-tag { display: flex; align-items: center; border: 1px solid theme("colors.separator"); color: theme("colors.text-mid") !important; font-size: 0.7rem; padding: 0.15rem 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.scan-content .clipped-top { clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px); }
+.scan-content .clipped-bot { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%); }
+.scan-content .lancer-border-tech { border-left: 3px solid theme("colors.secondary-logo") !important; }
+.scan-content .lancer-border-trait { border-left: 3px solid theme("colors.mission-partial") !important; }
+
 @keyframes terminal-scroll {
   from { transform: translateY(0); }
   to { transform: translateY(-50%); }
