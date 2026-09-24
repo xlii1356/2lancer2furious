@@ -1,14 +1,14 @@
-import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { currentUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot, deletePilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
+import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { getOptionalUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot, deletePilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
 import { DeleteButton } from "@/components/DeleteButton";
 
 type Mech = { name: string; frame: string | null };
 
 export default async function RosterPage() {
-  const user = await currentUser();
-  const isAdmin = user.role === "admin";
+  const user = await getOptionalUser();
+  const isAdmin = user?.role === "admin";
 
   const roster = await db.select({ sheet: pilotSheets, user: users }).from(pilotSheets).innerJoin(users, eq(users.id, pilotSheets.userId));
-  const mySheet = roster.find((r) => r.user.id === user.id)?.sheet;
+  const mySheet = user ? roster.find((r) => r.user.id === user.id)?.sheet : undefined;
   const members = isAdmin ? await db.select().from(allowedEmails) : [];
   const allUsers = isAdmin ? await db.select().from(users) : [];
 
@@ -39,23 +39,31 @@ export default async function RosterPage() {
 
       <section className="mt-8 border border-separator bg-surface p-5">
         <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Your pilot</h2>
-        {mySheet ? (
-          <Link href={`/roster/${user.id}`} className="mt-4 flex items-start gap-4 no-underline hover:opacity-90">
-            {(mySheet.portraitOverrideUrl || mySheet.portraitUrl) && <Image src={mySheet.portraitOverrideUrl || mySheet.portraitUrl!} alt="" width={72} height={72} className="h-18 w-18 shrink-0 border border-separator object-cover" unoptimized />}
-            <div>
-              <p className="font-semibold text-text-hi">{mySheet.callsign || mySheet.name}</p>
-              <p className="text-sm text-text-mid">{mySheet.name}{mySheet.background ? ` · ${mySheet.background}` : ""}</p>
-              <p className="mt-1 text-sm text-text-mid">{(mySheet.mechs as Mech[]).map((m) => m.name).join(", ") || "No mechs"}</p>
-            </div>
-          </Link>
+        {user ? (
+          <>
+            {mySheet ? (
+              <Link href={`/roster/${user.id}`} className="mt-4 flex items-start gap-4 no-underline hover:opacity-90">
+                {(mySheet.portraitOverrideUrl || mySheet.portraitUrl) && <Image src={mySheet.portraitOverrideUrl || mySheet.portraitUrl!} alt="" width={72} height={72} className="h-18 w-18 shrink-0 border border-separator object-cover" unoptimized />}
+                <div>
+                  <p className="font-semibold text-text-hi">{mySheet.callsign || mySheet.name}</p>
+                  <p className="text-sm text-text-mid">{mySheet.name}{mySheet.background ? ` · ${mySheet.background}` : ""}</p>
+                  <p className="mt-1 text-sm text-text-mid">{(mySheet.mechs as Mech[]).map((m) => m.name).join(", ") || "No mechs"}</p>
+                </div>
+              </Link>
+            ) : (
+              <p className="mt-2 text-text-mid">No pilot imported yet.</p>
+            )}
+            <form action={importPilotJson} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
+              <input type="file" name="file" accept="application/json,.json" required />
+              <button>{mySheet ? "Re-import" : "Import pilot JSON"}</button>
+            </form>
+            {mySheet && <div className="mt-2"><DeleteButton action={deleteMyPilot} label="pilot" /></div>}
+          </>
         ) : (
-          <p className="mt-2 text-text-mid">No pilot imported yet.</p>
+          <p className="mt-2 text-text-mid">
+            <Link className="text-primary" href="/signin">Log in</Link> to import and manage your pilot.
+          </p>
         )}
-        <form action={importPilotJson} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
-          <input type="file" name="file" accept="application/json,.json" required />
-          <button>{mySheet ? "Re-import" : "Import pilot JSON"}</button>
-        </form>
-        {mySheet && <div className="mt-2"><DeleteButton action={deleteMyPilot} label="pilot" /></div>}
       </section>
 
       {isAdmin && (

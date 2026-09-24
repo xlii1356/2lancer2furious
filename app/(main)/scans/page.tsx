@@ -1,8 +1,8 @@
-import { db } from "@/db"; import { mechScans, users } from "@/db/schema"; import { desc, eq } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers"; import { uploadMechScans } from "@/app/actions/mechScans"; import { ScanTable } from "@/components/ScanTable";
+import { db } from "@/db"; import { mechScans, users } from "@/db/schema"; import { desc, eq } from "drizzle-orm"; import { getOptionalUser } from "@/app/actions/helpers"; import { uploadMechScans } from "@/app/actions/mechScans"; import { ScanTable } from "@/components/ScanTable";
 
 export default async function ScansPage() {
-  const user = await currentUser();
-  const isAdmin = user.role === "admin";
+  const user = await getOptionalUser();
+  const isAdmin = user?.role === "admin";
 
   const rows = await db.select({ scan: mechScans, uploader: users }).from(mechScans).innerJoin(users, eq(users.id, mechScans.uploadedBy)).orderBy(desc(mechScans.createdAt));
   const scans = rows.map(({ scan, uploader }) => ({

@@ -1,17 +1,17 @@
-import { db } from "@/db"; import { briefing } from "@/db/schema"; import { currentUser } from "@/app/actions/helpers"; import { saveBriefing } from "@/app/actions/briefing"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle";
+import { db } from "@/db"; import { briefing } from "@/db/schema"; import { getOptionalUser } from "@/app/actions/helpers"; import { saveBriefing } from "@/app/actions/briefing"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle";
 
 const emptyDoc = { type: "doc", content: [{ type: "paragraph" }] };
 
 export default async function HomePage() {
-  const user = await currentUser();
-  const isAdmin = user.role === "admin";
+  const user = await getOptionalUser();
+  const isAdmin = user?.role === "admin";
 
   const row = await db.select().from(briefing).then((r) => r[0]);
 
   return (
     <article className="border border-separator bg-void">
       <div className="border-b border-separator px-5 py-3">
-        <p className="font-mono text-xs text-primary">&gt; WELCOME, {(user.username || "READER").toUpperCase()}</p>
+        <p className="font-mono text-xs text-primary">&gt; WELCOME, {(user?.username || "READER").toUpperCase()}</p>
         <p className="mt-1 font-mono text-xs text-text-mid">&gt; BRIEFING FEED :: LIVE</p>
       </div>
 

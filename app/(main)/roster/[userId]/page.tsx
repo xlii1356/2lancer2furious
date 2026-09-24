@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { AvatarCropper } from "@/components/AvatarCropper"; import { currentUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
+import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { AvatarCropper } from "@/components/AvatarCropper"; import { getOptionalUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
 type Talent = { id: string; rank: number; data?: { name?: string; description?: string; ranks?: { name?: string; description?: string }[] } };
@@ -26,14 +26,14 @@ function romanRank(n: number) {
 
 export default async function PilotDetailPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
-  const viewer = await currentUser();
+  const viewer = await getOptionalUser();
   const row = await db.select({ sheet: pilotSheets, user: users }).from(pilotSheets).innerJoin(users, eq(users.id, pilotSheets.userId)).where(eq(pilotSheets.userId, userId)).then((r) => r[0]);
   if (!row) notFound();
 
   const pilot = (row.sheet.raw as { data?: Pilot })?.data;
   if (!pilot) notFound();
 
-  const canEditArt = viewer.id === row.user.id || viewer.role === "admin";
+  const canEditArt = !!viewer && (viewer.id === row.user.id || viewer.role === "admin");
   const mech = pilot.mechs?.[0];
   const loadout = mech?.loadouts?.[0];
   const [hull = 0, agi = 0, sys = 0, eng = 0] = pilot.mechSkills || [];
