@@ -17,12 +17,12 @@ const LOG_LINES = [
   "> SENSOR SWEEP COMPLETE",
 ];
 
-function TerminalColumn({ reverse, delay }: { reverse?: boolean; delay: string }) {
+function TerminalColumn({ reverse, delay, className = "" }: { reverse?: boolean; delay: string; className?: string }) {
   const lines = [...LOG_LINES, ...LOG_LINES];
   return (
-    <div className="relative h-full w-56 overflow-hidden opacity-[0.10]">
+    <div className={`relative h-full w-[20rem] overflow-hidden opacity-[0.22] md:w-[26rem] xl:w-[38rem] ${className}`}>
       <div
-        className={`flex flex-col gap-3 whitespace-nowrap font-mono text-[11px] leading-tight text-primary ${
+        className={`flex flex-col gap-6 whitespace-nowrap font-mono text-[15px] font-bold leading-tight text-primary md:text-[20px] xl:text-[28px] ${
           reverse ? "animate-terminal-scroll-reverse" : "animate-terminal-scroll"
         }`}
         style={{ animationDelay: delay }}
@@ -38,10 +38,10 @@ function TerminalColumn({ reverse, delay }: { reverse?: boolean; delay: string }
 function WireframeGlobe() {
   const rings = [0, 30, 60, 90, 120, 150];
   return (
-    <div className="pointer-events-none absolute right-[-80px] top-[-80px] opacity-[0.12] [perspective:800px]">
-      <div className="animate-globe-spin h-[420px] w-[420px] [transform-style:preserve-3d]">
+    <div className="pointer-events-none absolute right-[-18vmin] top-[-10vmin] opacity-[0.32] [perspective:1600px]">
+      <div className="animate-globe-spin h-[110vmin] w-[110vmin] max-h-[1100px] max-w-[1100px] [transform-style:preserve-3d] drop-shadow-[0_0_12px_rgba(200,50,50,0.6)]">
         <svg viewBox="0 0 200 200" className="h-full w-full overflow-visible">
-          <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="0.75" className="text-primary" />
+          <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-primary" />
           {rings.map((deg) => (
             <ellipse
               key={`lon-${deg}`}
@@ -51,7 +51,7 @@ function WireframeGlobe() {
               ry="90"
               fill="none"
               stroke="currentColor"
-              strokeWidth="0.5"
+              strokeWidth="0.9"
               className="text-primary"
             />
           ))}
@@ -64,7 +64,7 @@ function WireframeGlobe() {
               ry={14}
               fill="none"
               stroke="currentColor"
-              strokeWidth="0.5"
+              strokeWidth="0.9"
               className="text-primary"
             />
           ))}
@@ -77,9 +77,9 @@ function WireframeGlobe() {
 export function AmbientBackground() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden motion-reduce:hidden">
-      <div className="absolute inset-0 flex justify-between px-4">
+      <div className="absolute inset-0 flex justify-between px-4 xl:px-8">
         <TerminalColumn delay="0s" />
-        <TerminalColumn reverse delay="-4s" />
+        <TerminalColumn reverse delay="-4s" className="hidden md:block" />
       </div>
       <WireframeGlobe />
     </div>
