@@ -1,7 +1,7 @@
-import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { intelEntries } from "@/db/schema"; import { desc } from "drizzle-orm"; import { currentUser } from "@/app/actions/helpers";
+import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { intelEntries } from "@/db/schema"; import { desc } from "drizzle-orm"; import { getOptionalUser } from "@/app/actions/helpers";
 
 export default async function IntelPage() {
-  const user = await currentUser();
+  const user = await getOptionalUser();
   const list = await db.select().from(intelEntries).orderBy(desc(intelEntries.createdAt));
 
   const groups = new Map<string, typeof list>();
@@ -18,7 +18,7 @@ export default async function IntelPage() {
     <>
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-3xl font-bold">Intel</h1>
-        {user.role === "admin" && <Link className="button" href="/intel/new">New entry</Link>}
+        {user?.role === "admin" && <Link className="button" href="/intel/new">New entry</Link>}
       </div>
 
       {!list.length && <p className="mt-6 text-text-mid">No intel entries posted yet.</p>}

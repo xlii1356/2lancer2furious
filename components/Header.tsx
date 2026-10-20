@@ -1,5 +1,5 @@
 import Link from "next/link"; import { logout } from "@/app/actions/auth";
-export function Header({ username, admin }: { username: string; admin: boolean }) {
+export function Header({ username, admin, loggedIn }: { username: string | null; admin: boolean; loggedIn: boolean }) {
   return (
     <header className="relative z-50 flex h-24 items-center bg-surface-translucent">
       <div className="z-[1] flex h-full items-center gap-4 bg-primary pl-6 pr-10">
@@ -15,10 +15,17 @@ export function Header({ username, admin }: { username: string; admin: boolean }
       <div className="rhombus-accent -ml-8 h-full w-10" aria-hidden="true" />
 
       <div className="ml-auto flex h-full items-end gap-6 px-6 py-2 text-text-hi">
-        <div className="flex flex-col items-end border-l border-separator pl-4">
-          <h4 className="m-0 font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid">Callsign</h4>
-          <span className="font-display text-lg font-extrabold uppercase tracking-[0.1em]">{username}</span>
-        </div>
+        {loggedIn ? (
+          <div className="flex flex-col items-end border-l border-separator pl-4">
+            <h4 className="m-0 font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid">Callsign</h4>
+            <span className="font-display text-lg font-extrabold uppercase tracking-[0.1em]">{username}</span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-end border-l border-separator pl-4">
+            <h4 className="m-0 font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid">Status</h4>
+            <span className="font-display text-lg font-extrabold uppercase tracking-[0.1em] text-text-mid">Read-only</span>
+          </div>
+        )}
         {admin && (
           <div className="flex flex-col items-end border-l border-separator pl-4">
             <h4 className="m-0 font-eyebrow text-[10px] font-bold uppercase tracking-[3px] text-text-mid">Clearance</h4>
@@ -30,11 +37,17 @@ export function Header({ username, admin }: { username: string; admin: boolean }
             New mission
           </Link>
         )}
-        <form action={logout} className="border-l border-separator pl-4">
-          <button className="bg-transparent px-0 py-0 font-eyebrow text-xs font-bold uppercase tracking-[0.15em] text-text-mid hover:bg-transparent hover:text-white">
-            Sign out
-          </button>
-        </form>
+        {loggedIn ? (
+          <form action={logout} className="border-l border-separator pl-4">
+            <button className="bg-transparent px-0 py-0 font-eyebrow text-xs font-bold uppercase tracking-[0.15em] text-text-mid hover:bg-transparent hover:text-white">
+              Sign out
+            </button>
+          </form>
+        ) : (
+          <Link href="/signin" className="border-l border-separator pl-4 font-eyebrow text-xs font-bold uppercase tracking-[0.15em] text-text-mid hover:text-white">
+            Sign in
+          </Link>
+        )}
       </div>
     </header>
   );
