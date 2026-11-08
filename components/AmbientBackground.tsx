@@ -35,41 +35,14 @@ function TerminalColumn({ reverse, delay, className = "" }: { reverse?: boolean;
   );
 }
 
-function WireframeGlobe() {
-  const rings = [0, 30, 60, 90, 120, 150];
+function CrestBackdrop() {
   return (
-    <div className="pointer-events-none absolute right-[-18vmin] top-[-10vmin] opacity-[0.32] [perspective:1600px]">
-      <div className="animate-globe-spin h-[110vmin] w-[110vmin] max-h-[1100px] max-w-[1100px] [transform-style:preserve-3d] drop-shadow-[0_0_12px_rgba(200,50,50,0.6)]">
-        <svg viewBox="0 0 200 200" className="h-full w-full overflow-visible">
-          <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-primary" />
-          {rings.map((deg) => (
-            <ellipse
-              key={`lon-${deg}`}
-              cx="100"
-              cy="100"
-              rx={Math.max(4, Math.abs(90 * Math.cos((deg * Math.PI) / 180)))}
-              ry="90"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="0.9"
-              className="text-primary"
-            />
-          ))}
-          {[-60, -30, 0, 30, 60].map((lat) => (
-            <ellipse
-              key={`lat-${lat}`}
-              cx="100"
-              cy={100 - lat}
-              rx={90 * Math.cos((lat * Math.PI) / 180)}
-              ry={14}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="0.9"
-              className="text-primary"
-            />
-          ))}
-        </svg>
-      </div>
+    <div className="pointer-events-none absolute right-[-18vmin] top-[-10vmin] opacity-[0.32] drop-shadow-[0_0_12px_rgba(200,50,50,0.6)]">
+      <img
+        src="/FiCo_Corps_Crest_Outlines.webp"
+        alt=""
+        className="h-[110vmin] w-[110vmin] max-h-[1100px] max-w-[1100px] object-contain"
+      />
     </div>
   );
 }
@@ -81,7 +54,7 @@ export function AmbientBackground() {
         <TerminalColumn delay="0s" />
         <TerminalColumn reverse delay="-4s" className="hidden md:block" />
       </div>
-      <WireframeGlobe />
+      <CrestBackdrop />
     </div>
   );
 }

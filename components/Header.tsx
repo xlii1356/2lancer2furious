@@ -3,6 +3,7 @@ export function Header({ username, admin, loggedIn }: { username: string | null;
   return (
     <header className="relative z-50 flex h-24 items-center bg-surface-translucent">
       <div className="z-[1] flex h-full items-center gap-4 bg-primary pl-6 pr-10">
+        <img src="/FiCo_Corps_Crest.webp" alt="FiCo Corps crest" className="h-[4.5rem] w-[4.5rem] shrink-0 object-contain" />
         <div className="flex flex-col justify-center">
           <span className="font-display text-2xl font-extrabold uppercase leading-none tracking-[0.15em] text-void">
             FiCo Corps
