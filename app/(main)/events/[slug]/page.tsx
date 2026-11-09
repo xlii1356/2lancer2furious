@@ -29,6 +29,8 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     .where(eq(responses.eventId, event.id));
 
   const claimed = user ? claims.some(({ signup }) => signup.userId === user.id) : false;
+  const myClaim = user ? claims.find(({ signup }) => signup.userId === user.id) : undefined;
+  const iAmRequired = !!myClaim?.signup.required;
   const hasWrittenUp = user ? entries.some(({ response }) => response.authorId === user.id) : false;
   const isAdmin = user?.role === "admin";
   const dates = (event.eventDates as string[]) || [];
@@ -69,10 +71,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
               <div key={signup.id} className="flex items-center gap-2 text-text-hi">
                 <Avatar id={claimant.id} url={claimant.avatarUrl} name={claimant.username} />
                 <span>{claimant.username}</span>
+                {signup.required && <span className="border border-primary px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">Required</span>}
               </div>
             ))}
           </div>
-          {user ? (
+          {user && iAmRequired ? (
+            <p className="mt-4 text-sm text-text-mid">You&apos;re a required pilot for this mission, so your slot is held for you.</p>
+          ) : user ? (
             <form className="mt-4" action={claimed ? releaseSlot.bind(null, event.id, slug) : claimSlot.bind(null, event.id, slug)}>
               <button disabled={!claimed && claims.length >= event.slotCount}>
                 {claimed ? "Release my slot" : claims.length >= event.slotCount ? "Full" : "Claim a slot"}

@@ -1,0 +1,1 @@
+ALTER TABLE signups ADD COLUMN IF NOT EXISTS required boolean NOT NULL DEFAULT false;

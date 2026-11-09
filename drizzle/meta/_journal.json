@@ -64,6 +64,13 @@
       "when": 8,
       "tag": "0009_briefing_and_population",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 9,
+      "tag": "0010_required_signups",
+      "breakpoints": true
     }
   ]
 }
