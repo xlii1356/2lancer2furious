@@ -31,6 +31,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const claimed = user ? claims.some(({ signup }) => signup.userId === user.id) : false;
   const myClaim = user ? claims.find(({ signup }) => signup.userId === user.id) : undefined;
   const iAmRequired = !!myClaim?.signup.required;
+  const requiredNames = claims.filter(({ signup }) => signup.required).map(({ user: c }) => c.username || c.name || "Unknown pilot");
   const hasWrittenUp = user ? entries.some(({ response }) => response.authorId === user.id) : false;
   const isAdmin = user?.role === "admin";
   const dates = (event.eventDates as string[]) || [];
@@ -42,6 +43,9 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
         <div>
           <h1 className="text-3xl font-bold text-text-hi">{event.title}</h1>
           <p className="mt-2 text-text-mid">{dates.length ? dates.join(", ") : "No date set"}</p>
+          {requiredNames.length > 0 && (
+            <p className="mt-1 text-text-hi"><span className="font-bold uppercase tracking-widest text-primary">Required:</span> {requiredNames.join(", ")}</p>
+          )}
         </div>
         {isAdmin && (
           <div className="flex shrink-0 gap-2">
@@ -60,7 +64,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           <h2 className="font-semibold text-text-hi">{claims.length} of {event.slotCount} slots claimed</h2>
           <div className="mt-3 flex items-center gap-1.5">
             {claims.map(({ signup, user: claimant }) => (
-              <Avatar key={signup.id} id={claimant.id} url={claimant.avatarUrl} name={claimant.username} size={28} />
+              <Avatar key={signup.id} id={claimant.id} url={claimant.avatarUrl} name={claimant.username} size={28} required={signup.required} />
             ))}
             {Array.from({ length: openSlots }).map((_, i) => (
               <span key={i} className="h-7 w-7 shrink-0 rounded-full border border-separator bg-void" />
@@ -69,7 +73,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           <div className="mt-4 space-y-2">
             {claims.map(({ signup, user: claimant }) => (
               <div key={signup.id} className="flex items-center gap-2 text-text-hi">
-                <Avatar id={claimant.id} url={claimant.avatarUrl} name={claimant.username} />
+                <Avatar id={claimant.id} url={claimant.avatarUrl} name={claimant.username} required={signup.required} />
                 <span>{claimant.username}</span>
                 {signup.required && <span className="border border-primary px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">Required</span>}
               </div>
