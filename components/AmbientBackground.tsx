@@ -3,14 +3,14 @@ const LOG_LINES = [
   "> SCANNING SECTOR GRID 04.19",
   "> PILOT ROSTER SYNC ... OK",
   "> DECRYPTING BRIEFING PACKET 0x3F2A",
-  "> NOS COOLANT LEVEL NOMINAL",
+  "> PROCESSING TAU-CETI DEPENDANCY",
   "> UPLINK LATENCY 12MS",
   "> FACTION INTEL FEED :: LIVE",
   "> STRUCTURE INTEGRITY 100%",
-  "> AWAITING PILOT AUTHORIZATION",
+  "> XOVERON PROTOCOL :: RUINED",
   "> COMMS CHANNEL 3 OPEN",
   "> NAV BEACON LOCKED",
-  "> THREAT ASSESSMENT :: LOW",
+  "> THREAT ASSESSMENT :: UNKNOWN",
   "> CACHING MISSION LOGS",
   "> REACTOR OUTPUT STABLE",
   "> ARCHIVE INDEX REBUILT",
@@ -43,7 +43,7 @@ function CrestBackdrop() {
 export function AmbientBackground() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden motion-reduce:hidden">
-      <div className="absolute inset-0 flex px-4 xl:px-8">
+      <div className="absolute inset-0 flex px-4 md:pl-[106px] xl:pl-[122px]">
         <TerminalColumn />
       </div>
       <CrestBackdrop />
