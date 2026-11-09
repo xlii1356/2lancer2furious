@@ -111,3 +111,10 @@
   to { transform: translateY(-50%); }
 }
 .animate-terminal-scroll { animation: terminal-scroll 70s linear infinite; }
+/* Counter-flip while the crest is facing away, so its text always reads correctly. Timed to the 30s globe-spin: flips at 90deg and 270deg, when the crest is edge-on. */
+@keyframes crest-flip {
+  0%, 24.99% { transform: scaleX(1); }
+  25%, 74.99% { transform: scaleX(-1); }
+  75%, 100% { transform: scaleX(1); }
+}
+.animate-crest-flip { animation: crest-flip 30s linear infinite; }

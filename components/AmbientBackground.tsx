@@ -34,7 +34,7 @@ function CrestBackdrop() {
   return (
     <div className="pointer-events-none absolute right-[-18vmin] top-[-10vmin] opacity-[0.32] [perspective:1600px]">
       <div className="animate-globe-spin h-[110vmin] w-[110vmin] max-h-[1100px] max-w-[1100px] [transform-style:preserve-3d] drop-shadow-[0_0_12px_rgba(200,50,50,0.6)]">
-        <img src="/FiCo_Corps_Crest_Outlines.webp" alt="" className="h-full w-full object-contain" />
+        <img src="/FiCo_Corps_Crest_Outlines.webp" alt="" className="animate-crest-flip h-full w-full object-contain" />
       </div>
     </div>
   );
