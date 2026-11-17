@@ -14,7 +14,7 @@ export default async function ScansPage() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold">Mech Scans</h1>
+      <h1 className="text-3xl font-bold">OpFor Intel</h1>
 
       {isAdmin && (
         <section className="mt-6 border border-separator bg-surface p-5">
