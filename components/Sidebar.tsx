@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { href: "/missions", icon: "/icons/campaign.svg", label: "Missions" },
   { href: "/intel", icon: "/icons/factions.svg", label: "Intel" },
   { href: "/roster", icon: "/icons/squad.svg", label: "Pilot Roster" },
-  { href: "/scans", icon: "/icons/mech.svg", label: "Mech Scans" },
+  { href: "/scans", icon: "/icons/mech.svg", label: "OpFor Intel" },
 ];
 
 const ADMIN_NAV_ITEMS: { href: string; icon: string; label: string }[] = [];
