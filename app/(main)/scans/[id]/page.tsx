@@ -15,7 +15,7 @@ export default async function ScanDetailPage({ params }: { params: Promise<{ id:
 
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
-          <Link href="/scans" className="text-sm text-text-mid hover:text-primary">← Mech Scans</Link>
+          <Link href="/scans" className="text-sm text-text-mid hover:text-primary">← OpFor Intel</Link>
           {user?.role === "admin" && <DeleteButton action={deleteMechScan.bind(null, row.scan.id)} label="scan" />}
         </div>
         <h1 className="mt-2 border-b border-separator pb-2 font-mono text-lg text-primary">{row.scan.name}</h1>
