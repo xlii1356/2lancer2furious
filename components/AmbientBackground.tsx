@@ -7,14 +7,14 @@ const LOG_LINES = [
   "> SCANNING SECTOR GRID 04.19",
   "> PILOT ROSTER SYNC ... OK",
   "> DECRYPTING BRIEFING PACKET 0x3F2A",
-  "> PROCESSING TAU-CETI DEPENDANCY",
+  "> NOS COOLANT LEVEL NOMINAL",
   "> UPLINK LATENCY 12MS",
   "> FACTION INTEL FEED :: LIVE",
   "> STRUCTURE INTEGRITY 100%",
-  "> XOVERON PROTOCOL :: RUINED",
+  "> AWAITING PILOT AUTHORIZATION",
   "> COMMS CHANNEL 3 OPEN",
   "> NAV BEACON LOCKED",
-  "> THREAT ASSESSMENT :: UNKNOWN",
+  "> THREAT ASSESSMENT :: LOW",
   "> CACHING MISSION LOGS",
   "> REACTOR OUTPUT STABLE",
   "> ARCHIVE INDEX REBUILT",
@@ -94,13 +94,30 @@ function CrestBackdrop() {
   );
 }
 
+// Site background: widescreen image normally, tall image on phones / portrait screens.
+function Backdrop() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20">
+      <picture>
+        <source media="(max-aspect-ratio: 1/1)" srcSet="/bg_9x16.webp" />
+        <img src="/bg_16x9.webp" alt="" className="h-full w-full object-cover" />
+      </picture>
+      {/* Darkens the image so text stays readable. Lower /40 for a brighter background. */}
+      <div className="absolute inset-0 bg-black/40" />
+    </div>
+  );
+}
+
 export function AmbientBackground() {
   return (
+    <>
+    <Backdrop />
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden motion-reduce:hidden">
       <div className="absolute inset-0 flex px-4 md:pl-[106px] xl:pl-[122px]">
         <TerminalColumn />
       </div>
       <CrestBackdrop />
     </div>
+    </>
   );
 }

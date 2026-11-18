@@ -30,7 +30,7 @@ export default async function HomePage() {
             editView={
               <div className="border border-separator bg-surface p-4">
                 <form action={saveBriefing} className="space-y-3">
-                  <RichTextEditor name="body" defaultValue={(row?.body as object) || emptyDoc} />
+                  <RichTextEditor name="body" defaultValue={(row?.body as object) || emptyDoc} allowVideo />
                   <button className="w-full">Save briefing</button>
                 </form>
               </div>

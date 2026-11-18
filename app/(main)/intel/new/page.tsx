@@ -22,6 +22,10 @@ export default async function NewIntelEntry({ searchParams }: { searchParams: Pr
             ))}
           </datalist>
         </label>
+        <label className="flex cursor-pointer items-center gap-3">
+          <input type="checkbox" name="hidden" defaultChecked={entry?.hidden} className="!w-4 !p-0 h-4 shrink-0 accent-[#c0403c]" />
+          <span>Hidden — only admins can see this entry until you unhide it</span>
+        </label>
         <label>Picture<ImageUpload name="imageUrl" defaultValue={entry?.imageUrl} /></label>
         <div>Write-up<RichTextEditor name="body" defaultValue={entry?.body as object} /></div>
         <button>{entry ? "Save changes" : "Post"}</button>
