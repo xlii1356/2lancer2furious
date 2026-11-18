@@ -3,24 +3,29 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { upload } from "@vercel/blob/client";
+import { Video } from "./tiptapVideo";
 import { useEffect, useRef, useState } from "react";
 
 export function RichTextEditor({
   name,
   defaultValue,
+  allowVideo = false,
 }: {
   name: string;
   defaultValue?: object;
+  allowVideo?: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [videoProgress, setVideoProgress] = useState<number | null>(null);
   const editor = useEditor({
     // StarterKit v3 already includes a Link extension by default — registering
     // @tiptap/extension-link separately here caused a genuine duplicate-extension
     // conflict ("[tiptap warn]: Duplicate extension names found: ['link']"),
     // which is what was actually behind the instability (stuck marks, typing
     // issues). Image isn't bundled by StarterKit, so it still needs adding.
-    extensions: [StarterKit, Image],
+    extensions: allowVideo ? [StarterKit, Image, Video] : [StarterKit, Image],
     content: defaultValue || { type: "doc", content: [{ type: "paragraph" }] },
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
@@ -50,6 +55,37 @@ export function RichTextEditor({
     } finally {
       setImageUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleVideoFile(file: File | undefined) {
+    if (!file || !editor) return;
+    if (file.type !== "video/mp4" && file.type !== "video/webm") {
+      window.alert("Videos must be MP4 or WebM.");
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      window.alert("That video is over the 50 MB limit. Trim or compress it and try again.");
+      if (videoInputRef.current) videoInputRef.current.value = "";
+      return;
+    }
+    setVideoProgress(0);
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+        clientPayload: "video",
+        multipart: true,
+        onUploadProgress: ({ percentage }) => setVideoProgress(Math.round(percentage)),
+      });
+      editor.chain().focus().setVideo(blob.url).run();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      window.alert(`Video upload failed: ${message}`);
+    } finally {
+      setVideoProgress(null);
+      if (videoInputRef.current) videoInputRef.current.value = "";
     }
   }
 
@@ -87,6 +123,14 @@ export function RichTextEditor({
         <button type="button" className={btn(false)} disabled={imageUploading} onMouseDown={mousedown(() => fileInputRef.current?.click())}>
           {imageUploading ? "Uploading..." : "Image"}
         </button>
+        {allowVideo && (
+          <>
+            <button type="button" className={btn(false)} disabled={videoProgress !== null} onMouseDown={mousedown(() => videoInputRef.current?.click())}>
+              {videoProgress !== null ? `Uploading ${videoProgress}%` : "Video"}
+            </button>
+            <input ref={videoInputRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={(e) => handleVideoFile(e.target.files?.[0])} />
+          </>
+        )}
         <input
           ref={fileInputRef}
           type="file"
