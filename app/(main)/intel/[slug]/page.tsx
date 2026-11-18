@@ -1,4 +1,4 @@
-import Link from "next/link"; import Image from "next/image"; import { notFound } from "next/navigation"; import { db } from "@/db"; import { intelEntries, intelNotes, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { getOptionalUser } from "@/app/actions/helpers"; import { deleteIntelEntry, setIntelHidden } from "@/app/actions/intel"; import { saveIntelNotes } from "@/app/actions/intelNotes"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle"; import { DeleteButton } from "@/components/DeleteButton";
+import Link from "next/link"; import Image from "next/image"; import { notFound } from "next/navigation"; import { db } from "@/db"; import { intelEntries, intelNotes, users } from "@/db/schema"; import { asc, eq } from "drizzle-orm"; import { getOptionalUser } from "@/app/actions/helpers"; import { deleteIntelEntry, setIntelHidden } from "@/app/actions/intel"; import { saveIntelNotes } from "@/app/actions/intelNotes"; import { TiptapRenderer } from "@/components/TiptapRenderer"; import { RichTextEditor } from "@/components/RichTextEditor"; import { NotesToggle } from "@/components/NotesToggle"; import { DeleteButton } from "@/components/DeleteButton";
 
 const emptyDoc = { type: "doc", content: [{ type: "paragraph" }] };
 
@@ -8,6 +8,7 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
   const entry = await db.query.intelEntries.findFirst({ where: eq(intelEntries.slug, slug) });
   const isAdmin = user?.role === "admin";
   if (!entry || (entry.hidden && !isAdmin)) notFound();
+  const linkTargets = user ? (await db.select({ name: intelEntries.name, slug: intelEntries.slug, category: intelEntries.category, hidden: intelEntries.hidden }).from(intelEntries).where(isAdmin ? undefined : eq(intelEntries.hidden, false)).orderBy(asc(intelEntries.name))).filter((t) => t.slug !== entry.slug) : [];
 
   const notesRow = await db.select({ note: intelNotes, editor: users }).from(intelNotes).leftJoin(users, eq(users.id, intelNotes.updatedBy)).where(eq(intelNotes.entryId, entry.id)).then((r) => r[0]);
 
@@ -53,7 +54,7 @@ export default async function IntelEntryPage({ params }: { params: Promise<{ slu
                 <form action={saveIntelNotes} className="mt-3 space-y-3">
                   <input type="hidden" name="entryId" value={entry.id} />
                   <input type="hidden" name="slug" value={slug} />
-                  <RichTextEditor name="body" defaultValue={(notesRow?.note.body as object) || emptyDoc} />
+                  <RichTextEditor name="body" defaultValue={(notesRow?.note.body as object) || emptyDoc} linkTargets={linkTargets} />
                   <button className="w-full">Save notes</button>
                 </form>
               </div>
