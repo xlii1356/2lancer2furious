@@ -1,5 +1,5 @@
 "use server";
-import { db } from "@/db"; import { pilotSheets } from "@/db/schema"; import { currentUser } from "./helpers"; import { eq } from "drizzle-orm"; import { revalidatePath } from "next/cache"; import { redirect } from "next/navigation";
+import { db } from "@/db"; import { pilotSheets } from "@/db/schema"; import { currentUser } from "./helpers"; import { eq } from "drizzle-orm"; import { revalidatePath } from "next/cache"; import { generateAvatarFor } from "@/lib/autoAvatar"; import { redirect } from "next/navigation";
 
 type RawMech = { name?: string; frame?: string };
 
@@ -45,6 +45,9 @@ export async function importPilotJson(formData: FormData) {
       target: pilotSheets.userId,
       set: { callsign, name, background, status, portraitUrl, mechs, raw: parsed as object, updatedAt: new Date() },
     });
+
+  // New avatar from the imported art, unless this pilot already has one. Never blocks the import.
+  try { await generateAvatarFor(targetUserId); } catch { /* ignore */ }
 
   revalidatePath("/roster");
   revalidatePath(`/roster/${targetUserId}`);

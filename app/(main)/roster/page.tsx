@@ -1,3 +1,4 @@
+import { generateMissingAvatars } from "@/app/actions/avatar";
 import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { getOptionalUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot, deletePilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
 import { DeleteButton } from "@/components/DeleteButton";
 
@@ -11,10 +12,17 @@ export default async function RosterPage() {
   const mySheet = user ? roster.find((r) => r.user.id === user.id)?.sheet : undefined;
   const members = isAdmin ? await db.select().from(allowedEmails) : [];
   const allUsers = isAdmin ? await db.select().from(users) : [];
+  const missingAvatars = isAdmin ? roster.filter((r) => !r.user.avatarUrl && (r.sheet.portraitOverrideUrl || r.sheet.portraitUrl)).length : 0;
 
   return (
     <>
       <h1 className="text-3xl font-bold">Pilot Roster</h1>
+
+      {isAdmin && missingAvatars > 0 && (
+        <form action={generateMissingAvatars} className="mt-4">
+          <button>Generate missing avatars ({missingAvatars})</button>
+        </form>
+      )}
 
       {isAdmin && (
         <section className="mt-8 border border-separator bg-surface p-5">

@@ -1,3 +1,4 @@
+import { autoGenerateAvatar } from "@/app/actions/avatar";
 import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { AvatarCropper } from "@/components/AvatarCropper"; import { getOptionalUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
@@ -80,7 +81,11 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
                       <p className="eyebrow">Site avatar</p>
                       {pilotPortrait !== "/icons/portrait.svg" ? (
                         <>
-                          <p className="mt-1 text-xs text-text-mid">Crop the Pilot Visual above to use as {row.user.username || "this pilot"}&apos;s avatar around the site.</p>
+                          <p className="mt-1 text-xs text-text-mid">Make {row.user.username || "this pilot"}&apos;s avatar from the Pilot Visual above, automatically or by cropping it yourself.</p>
+                          <form action={autoGenerateAvatar} className="mt-3">
+                            <input type="hidden" name="userId" value={row.user.id} />
+                            <button className="w-full">Auto-generate from pilot art</button>
+                          </form>
                           <div className="mt-3">
                             <AvatarCropper imageSrc={pilotPortrait} userId={row.user.id} />
                           </div>
