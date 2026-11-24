@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// Put your video at public/intro.mp4 (or change this path).
-const VIDEO_SRC = "/intro.mp4";
+// Widescreen video normally, tall video on phones / portrait screens (same rule as the background image).
+const VIDEO_LANDSCAPE = "/intro_16x9.webm";
+const VIDEO_PORTRAIT = "/intro_9x16.webm";
 const SEEN_KEY = "fico-intro-seen";
 const FADE_MS = 700; // fade-out time once the video ends or is skipped
 const CLICK_GUARD_MS = 600; // ignore clicks this soon after starting, so a double-click doesn't skip
@@ -12,6 +13,7 @@ type Phase = "gate" | "playing" | "fading" | "done";
 
 export function StartupIntro() {
   const [phase, setPhase] = useState<Phase>("gate");
+  const [src, setSrc] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const startedAt = useRef(0);
 
@@ -32,6 +34,7 @@ export function StartupIntro() {
 
   // Decide whether to show it at all: once per browser session, for everyone.
   useEffect(() => {
+    setSrc(window.matchMedia("(max-aspect-ratio: 1/1)").matches ? VIDEO_PORTRAIT : VIDEO_LANDSCAPE);
     try {
       if (sessionStorage.getItem(SEEN_KEY) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         setPhase("done");
@@ -86,9 +89,10 @@ export function StartupIntro() {
         style={{ transitionDuration: `${FADE_MS}ms` }}
       >
         {/* Loads in the background while the gate is showing. If the file is missing, the intro is skipped. */}
+        {src && (
         <video
           ref={videoRef}
-          src={VIDEO_SRC}
+          src={src}
           preload="auto"
           playsInline
           disablePictureInPicture
@@ -96,6 +100,7 @@ export function StartupIntro() {
           onError={() => setPhase("done")}
           className={`absolute inset-0 h-full w-full object-contain ${phase === "gate" ? "opacity-0" : "opacity-100"}`}
         />
+        )}
         {phase === "gate" && (
           <div className="relative flex flex-col items-center gap-6 text-center">
             <img src="/FiCo_Corps_Crest.webp" alt="" className="h-28 w-28 object-contain" />
