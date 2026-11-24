@@ -1,4 +1,5 @@
 import { autoGenerateAvatar } from "@/app/actions/avatar";
+import { refreshPilotFromCompcon } from "@/app/actions/pilots";
 import { notFound } from "next/navigation"; import { db } from "@/db"; import { pilotSheets, users } from "@/db/schema"; import { eq } from "drizzle-orm"; import { SplitPortrait } from "@/components/SplitPortrait"; import { ImageUpload } from "@/components/ImageUpload"; import { IconDisclosure } from "@/components/IconDisclosure"; import { AvatarCropper } from "@/components/AvatarCropper"; import { getOptionalUser } from "@/app/actions/helpers"; import { setPilotArt } from "@/app/actions/pilots";
 
 type Skill = { id: string; rank: number; data?: { name?: string } };
@@ -77,6 +78,17 @@ export default async function PilotDetailPage({ params }: { params: Promise<{ us
                       <label className="block text-xs">Mech art<ImageUpload name="mechPortraitOverrideUrl" defaultValue={row.sheet.mechPortraitOverrideUrl} /></label>
                       <button className="w-full">Save art</button>
                     </form>
+                    {row.sheet.shareCode && (
+                      <div className="mt-5 border-t border-separator pt-4">
+                        <p className="eyebrow">Pilot info</p>
+                        <p className="mt-1 text-xs text-text-mid">Re-pull name, background, status and mechs from Comp/Con. Your art overrides and avatar stay as they are.</p>
+                        <form action={refreshPilotFromCompcon} className="mt-3">
+                          <input type="hidden" name="userId" value={row.user.id} />
+                          <input type="hidden" name="returnTo" value={`/roster/${row.user.id}`} />
+                          <button className="w-full">Update pilot info</button>
+                        </form>
+                      </div>
+                    )}
                     <div className="mt-5 border-t border-separator pt-4">
                       <p className="eyebrow">Site avatar</p>
                       {pilotPortrait !== "/icons/portrait.svg" ? (
