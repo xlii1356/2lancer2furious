@@ -1,11 +1,11 @@
 import { generateMissingAvatars } from "@/app/actions/avatar";
-import { importPilotShareCode, refreshPilotFromCompcon } from "@/app/actions/pilots";
 import Link from "next/link"; import Image from "next/image"; import { db } from "@/db"; import { allowedEmails, pilotSheets, users } from "@/db/schema"; import { getOptionalUser } from "@/app/actions/helpers"; import { addMember, removeMember } from "@/app/actions/admin"; import { importPilotJson, deleteMyPilot, deletePilot } from "@/app/actions/pilots"; import { eq } from "drizzle-orm";
 import { DeleteButton } from "@/components/DeleteButton";
 
 type Mech = { name: string; frame: string | null };
 
-export default async function RosterPage() {
+export default async function RosterPage({ searchParams }: { searchParams: Promise<{ importError?: string }> }) {
+  const { importError } = await searchParams;
   const user = await getOptionalUser();
   const isAdmin = user?.role === "admin";
 
@@ -18,6 +18,10 @@ export default async function RosterPage() {
   return (
     <>
       <h1 className="text-3xl font-bold">Pilot Roster</h1>
+
+      {importError && (
+        <p role="alert" className="mt-4 border border-primary bg-primary/10 px-4 py-3 text-sm text-text-hi">{importError}</p>
+      )}
 
       {isAdmin && missingAvatars > 0 && (
         <form action={generateMissingAvatars} className="mt-4">
@@ -62,24 +66,10 @@ export default async function RosterPage() {
             ) : (
               <p className="mt-2 text-text-mid">No pilot imported yet.</p>
             )}
-            <form action={importPilotShareCode} className="mt-4 flex flex-wrap items-center gap-3">
-              <input name="code" required placeholder="Comp/Con share code" autoComplete="off" className="max-w-xs" />
-              <button>{mySheet ? "Re-import" : "Import pilot"}</button>
+            <form action={importPilotJson} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
+              <input type="file" name="file" accept="application/json,.json" required />
+              <button>{mySheet ? "Re-import" : "Import pilot JSON"}</button>
             </form>
-            {mySheet?.shareCode && (
-              <form action={refreshPilotFromCompcon} className="mt-3 flex flex-wrap items-center gap-3">
-                <input type="hidden" name="returnTo" value="/roster" />
-                <button>Update pilot info</button>
-                <span className="text-xs text-text-mid">Re-pulls from Comp/Con · last updated {mySheet.updatedAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-              </form>
-            )}
-            <details className="mt-3 text-sm text-text-mid">
-              <summary className="cursor-pointer">Import from a JSON file instead</summary>
-              <form action={importPilotJson} encType="multipart/form-data" className="mt-3 flex flex-wrap items-center gap-3">
-                <input type="file" name="file" accept="application/json,.json" required />
-                <button>Import file</button>
-              </form>
-            </details>
             {mySheet && <div className="mt-2"><DeleteButton action={deleteMyPilot} label="pilot" /></div>}
           </>
         ) : (
@@ -92,29 +82,16 @@ export default async function RosterPage() {
       {isAdmin && (
         <section className="mt-8 border border-separator bg-surface p-5">
           <h2 className="font-display text-lg font-bold uppercase tracking-wide text-text-hi">Import for another pilot</h2>
-          <form action={importPilotShareCode} className="mt-4 flex flex-wrap items-center gap-3">
+          <form action={importPilotJson} encType="multipart/form-data" className="mt-4 flex flex-wrap items-center gap-3">
             <select name="userId" required defaultValue="">
               <option value="" disabled>Choose a pilot...</option>
               {allUsers.map((u) => (
                 <option key={u.id} value={u.id}>{u.username || u.email}</option>
               ))}
             </select>
-            <input name="code" required placeholder="Comp/Con share code" autoComplete="off" className="max-w-xs" />
+            <input type="file" name="file" accept="application/json,.json" required />
             <button>Import</button>
           </form>
-          <details className="mt-3 text-sm text-text-mid">
-            <summary className="cursor-pointer">Import from a JSON file instead</summary>
-            <form action={importPilotJson} encType="multipart/form-data" className="mt-3 flex flex-wrap items-center gap-3">
-              <select name="userId" required defaultValue="">
-                <option value="" disabled>Choose a pilot...</option>
-                {allUsers.map((u) => (
-                  <option key={u.id} value={u.id}>{u.username || u.email}</option>
-                ))}
-              </select>
-              <input type="file" name="file" accept="application/json,.json" required />
-              <button>Import file</button>
-            </form>
-          </details>
         </section>
       )}
 
