@@ -11,7 +11,6 @@ export default async function Respond({ params }: { params: Promise<{ slug: stri
       <form action={saveResponse} className="mt-6 space-y-4">
         <input type="hidden" name="eventId" value={event.id} />
         <input type="hidden" name="slug" value={slug} />
-        <label>Posted as<input name="byline" defaultValue={response?.byline || user.username || ""} maxLength={60} /></label>
         <div>Writeup<RichTextEditor name="body" defaultValue={response?.body as object} allowVideo /></div>
         <button>{response ? "Update writeup" : "Post writeup"}</button>
       </form>

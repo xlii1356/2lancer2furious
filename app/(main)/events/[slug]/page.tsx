@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { events, responses, signups, users } from "@/db/schema";
+import { events, pilotSheets, responses, signups, users } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { getOptionalUser } from "@/app/actions/helpers";
 import { claimSlot, releaseSlot } from "@/app/actions/signups";
@@ -23,9 +23,10 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
     .where(eq(signups.eventId, event.id))
     .orderBy(asc(signups.createdAt));
   const entries = await db
-    .select({ response: responses, user: users })
+    .select({ response: responses, user: users, callsign: pilotSheets.callsign })
     .from(responses)
     .innerJoin(users, eq(users.id, responses.authorId))
+    .leftJoin(pilotSheets, eq(pilotSheets.userId, users.id))
     .where(eq(responses.eventId, event.id));
 
   const claimed = user ? claims.some(({ signup }) => signup.userId === user.id) : false;
@@ -106,14 +107,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       )}
 
       <section className="mt-10 space-y-8">
-        {entries.map(({ response, user: author }) => (
+        {entries.map(({ response, user: author, callsign }) => (
           <div key={response.id} className="border-t border-separator pt-6">
             <div className="mb-3 flex items-center gap-3">
-              <Avatar id={author.id} url={author.avatarUrl} name={author.username} />
+              <Avatar id={author.id} url={author.avatarUrl} name={callsign || author.username} />
               <div>
-                <strong className="text-text-hi">{response.byline || author.username || author.name}</strong>
+                <strong className="text-text-hi">{callsign || author.username || author.name}</strong>
                 <div className="text-sm text-text-mid">{response.updatedAt.toLocaleDateString()}</div>
-                {isAdmin && <div className="text-sm text-text-mid">{author.email}</div>}
               </div>
             </div>
             <div className="prose-content text-text-hi">
